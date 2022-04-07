@@ -1,0 +1,7 @@
+# requirements.txt
+fastapi[all]==0.70.0
+sqlalchemy[asyncio]
+aiomysql
+python-jose
+passlib
+alembic

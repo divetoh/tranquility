@@ -1,0 +1,5 @@
+return {
+  framework: {
+    plugins: ["Dialog"],
+  },
+};

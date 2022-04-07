@@ -1,0 +1,29 @@
+version: '3'
+
+services:
+  db:
+    image: mariadb:10.7
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./db:/var/lib/mysql
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    command: bash -c "./docker.start.sh"
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    env_file:
+      - .env
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
