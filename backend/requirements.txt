@@ -1,5 +1,5 @@
 # requirements.txt
-fastapi[all]==0.70.0
+fastapi[all]>=0.70.0,<0.71.0
 sqlalchemy[asyncio]
 aiomysql
 python-jose

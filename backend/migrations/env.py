@@ -34,7 +34,7 @@ def get_url():
     user = os.getenv("MYSQL_USER", "tranquility")
     password = os.getenv("MYSQL_PASSWORD", "")
     server = os.getenv("MYSQL_SERVER", "db")
-    db = os.getenv("MYSQL_DB", "tranquility")
+    db = os.getenv("MYSQL_DATABASE", "tranquility")
     return f"mysql+aiomysql://{user}:{password}@{server}:3306/{db}"
 
 def run_migrations_offline():

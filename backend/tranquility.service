@@ -1,0 +1,13 @@
+[Unit]
+Description=Tranquility Gunicorn Daemon
+After=network.target
+
+[Service]
+User=tranquility
+Group=tranquility
+WorkingDirectory=/srv/tranquility/backend
+EnvironmentFile=/srv/tranquility/.env.local
+ExecStart=/srv/tranquility/backend/.venv/bin/gunicorn -c gunicorn_conf.py app.main:app
+
+[Install]
+WantedBy=multi-user.target

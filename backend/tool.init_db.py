@@ -12,7 +12,7 @@ async def go() -> None:
     db = await dbg.__anext__()
     users_count = await crud.user.get_count(db)
     if users_count == 0:
-        print("Creating administrative user.")
+        print("* Creating administrative user.")
         user_in = schemas.SUserCreate(
             full_name=settings.FIRST_SUPERUSER,
             email=settings.FIRST_SUPERUSER,
