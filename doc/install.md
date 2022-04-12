@@ -115,7 +115,6 @@ If all works correct, you can open Swagger UI interface in browser: http://[your
 
 #### 5. Gunicorn configuration
 
-The configuration on gunicorn is in file /backend/unicorn_conf.py, you can edit path to socket or log-files.
 
 Add user to system, create folders for logs and socket, and set owner:
 ```
@@ -124,7 +123,10 @@ sudo mkdir /var/log/tranquility
 sudo chown tranquility /var/log/tranquility
 sudo mkdir /srv/tranquility/socket
 sudo chown tranquility /srv/tranquility/socket
+sudo cp /srv/tranquility/backend/gunicorn_conf.py.template /srv/tranquility/backend/gunicorn_conf.py
 ```
+
+The configuration on gunicorn is in file /backend/unicorn_conf.py, you can edit path to socket or log-files.
 
 Copy system.d configuration file, enable and start gunicorn:
 ```
@@ -141,7 +143,7 @@ cat /var/log/tranquility/error_log
 
 #### 6. NGINx configuration
 
-Install nginx, edit configuration:
+Install nginx, edit configuration.
 ```
 sudo apt install nginx
 sudo rm /etc/nginx/sites-enabled/default
@@ -162,6 +164,12 @@ server {
     }
 }
 ```
+Restart nginx.
+```
+sudo systemctl restart nginx
+```
+Open `http://[your_server_ip]/` in browser.
+
 
 #### 7. Afterword
 Don't forget to do these basic things:

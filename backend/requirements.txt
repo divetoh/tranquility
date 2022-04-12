@@ -5,3 +5,4 @@ aiomysql
 python-jose
 passlib
 alembic
+gunicorn
