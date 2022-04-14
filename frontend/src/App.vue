@@ -107,4 +107,21 @@ tbody .qtable_inactive_row td {
 .bg-card-head {
   background-color: rgb(245, 245, 245) !important;
 }
+
+.scroll6::-webkit-scrollbar {
+  display: block;
+  height: 6px;
+  width: 6px;
+}
+
+.scroll6::-webkit-scrollbar-track {
+  background-color: #394454ce;
+  border-radius: 10px;
+  margin: 6px;
+}
+
+.scroll6::-webkit-scrollbar-thumb {
+  background-color: #c1c1c1;
+  border-radius: 10px;
+}
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <q-page>
+    <q-page class="flex column">
       <div>
         <q-tabs
           no-caps
@@ -14,7 +14,7 @@
           <q-btn class="glossy" round icon="edit" size="sm" v-on:click="edit_activity" />
         </q-tabs>
       </div>
-      <div class="q-px-md">
+      <div style="flex-grow: 1; position: relative">
         <div v-if="workspace == undefined">&nbsp;</div>
         <WorkspaceColumns :uid="workspace_id" v-else />
       </div>
