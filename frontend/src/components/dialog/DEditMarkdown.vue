@@ -76,27 +76,13 @@ export default {
 </script>
 
 <style scoped>
-.input1,
-.output1 {
+.output {
   overflow: auto;
-  width: 50%;
-  height: 90%;
-  box-sizing: border-box;
-  padding: 0 20px;
+  height: 100%;
+  padding: 0px 5px;
 }
 
-.input1 {
-  border: none;
-  border-right: 1px solid #ccc;
+.input {
   resize: none;
-  outline: none;
-  background-color: #f6f6f6;
-  font-size: 14px;
-  font-family: "Monaco", courier, monospace;
-  padding: 20px;
-}
-
-.editor1 {
-  display: flex;
 }
 </style>

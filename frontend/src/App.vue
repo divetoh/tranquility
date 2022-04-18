@@ -72,15 +72,6 @@ html {
   opacity: 1;
   transition: 0.2s;
 }
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  margin-top: 0.15em;
-  margin-bottom: 0.05em;
-}
 
 .pointer_cursor {
   cursor: pointer;
@@ -147,5 +138,9 @@ tbody .qtable_inactive_row td {
   background-color: rgb(245, 245, 245);
   border-bottom-right-radius: 4px;
   border-top-left-radius: 4px;
+}
+
+.block_wrapper {
+  white-space: normal;
 }
 </style>
