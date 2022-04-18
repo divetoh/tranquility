@@ -1,12 +1,13 @@
 <template>
-  <div>
-    <BlockMarkdown
-      v-if="block.type == 'markdown'"
-      :uid="block.uid"
-      :actions="actions"
-      @moveBlock="moveBlock"
-      @delBlock="delBlock"
-    />
+  <div
+    class="draggable block_wrapper"
+    draggable="True"
+    @mousedown="mousedown"
+    v-on:dragstart="dragStart"
+    v-on:dragend="dragEnd"
+    ref="wrapperRef"
+  >
+    <BlockMarkdown v-if="block.type == 'markdown'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
     <TaskList v-if="block.type == 'coretasklist'" :actions="actions" @moveBlock="moveBlock" @delBlock="delBlock" />
   </div>
 </template>
@@ -23,14 +24,35 @@ export default {
     BlockMarkdown,
     TaskList,
   },
+  created: async function () {
+    this.vars = {
+      handled: false,
+    };
+  },
   methods: {
-    moveBlock: async function (direction) {
-      this.$store.dispatch("aWorkspaceBlockMove", {
-        workspace: this.workspace,
-        row: this.row,
-        col: this.col,
-        direction,
-      });
+    mousedown: function (event) {
+      // Is clicked on drag handler?
+      this.vars.handled = event.target.classList.contains("drag_handler");
+    },
+    dragStart: function (event) {
+      if (this.vars.handled) {
+        this.$dragState.objectType = "WSBlock";
+        this.$dragState.object = {
+          workspace: this.workspace,
+          block: this.block.uid,
+          row: this.row,
+          col: this.col,
+        };
+        event.target.style.opacity = 0.5;
+      } else {
+        event.preventDefault();
+        return false;
+      }
+    },
+    dragEnd: function (event) {
+      this.$dragState.objectType = "";
+      this.$dragState.object = {};
+      event.target.style.opacity = "";
     },
     delBlock: async function () {
       this.$store.dispatch("aWorkspaceBlockDelete", {

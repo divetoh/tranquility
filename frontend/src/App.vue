@@ -124,4 +124,28 @@ tbody .qtable_inactive_row td {
   background-color: #c1c1c1;
   border-radius: 10px;
 }
+
+.dropzone {
+  border-radius: 2px;
+  display: none;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 200px;
+  height: 200px;
+  background-color: #ff9800;
+  opacity: 0.5;
+  z-index: 1000;
+}
+.draggable .drag_handler {
+  cursor: move;
+}
+
+.block_wrapper .drag_handler {
+  padding: 2px 10px;
+  height: 100%;
+  background-color: rgb(245, 245, 245);
+  border-bottom-right-radius: 4px;
+  border-top-left-radius: 4px;
+}
 </style>

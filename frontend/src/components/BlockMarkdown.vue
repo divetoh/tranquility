@@ -1,27 +1,7 @@
 <template>
-  <q-card class="q-mb-sm">
-    <q-bar dense class="bg-card-head hover_ctrl">
-      <q-btn-group outline class="hover_block">
-        <q-btn dense flat @click="$emit('moveBlock', 'left')" icon="keyboard_arrow_left" :disabled="!actions.moveleft">
-          <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block left </q-tooltip>
-        </q-btn>
-        <q-btn dense flat @click="$emit('moveBlock', 'up')" icon="keyboard_arrow_up" :disabled="!actions.moveup">
-          <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block up </q-tooltip>
-        </q-btn>
-        <q-btn dense flat @click="$emit('moveBlock', 'down')" icon="keyboard_arrow_down" :disabled="!actions.movedown">
-          <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block down </q-tooltip>
-        </q-btn>
-        <q-btn
-          dense
-          flat
-          @click="$emit('moveBlock', 'right')"
-          icon="keyboard_arrow_right"
-          :disabled="!actions.moveright"
-        >
-          <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block right </q-tooltip>
-        </q-btn>
-      </q-btn-group>
-      <q-space />
+  <q-card class="q-mb-sm q-pa-none">
+    <q-bar dense class="bg-white hover_ctrl q-pa-none">
+      <q-space class="drag_handler" />
       <q-btn dense flat v-on:click="edit" icon="edit" size="xs">
         <q-tooltip :delay="550" anchor="top middle" self="center middle"> Edit block </q-tooltip>
       </q-btn>
@@ -29,7 +9,7 @@
         <q-tooltip :delay="550" anchor="top middle" self="center middle"> Delete block </q-tooltip>
       </q-btn>
     </q-bar>
-    <q-card-section class="text-left q-pa-sm">
+    <q-card-section class="text-left q-pa-sm" style="user-select: text">
       <q-card-section class="text-center" v-if="markdown === undefined">
         Loading... <q-spinner-rings color="grey" size="md" />
       </q-card-section>
@@ -46,7 +26,7 @@ import DEditMarkdown from "@/components/dialog/DEditMarkdown";
 
 export default {
   name: "BlockMarkdown",
-  emits: ["moveBlock", "delBlock"],
+  emits: ["delBlock"],
   props: ["uid", "actions"],
   created: async function () {
     marked.setOptions({

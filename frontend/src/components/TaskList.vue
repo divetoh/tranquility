@@ -1,44 +1,11 @@
 <template>
-  <q-card class="q-mb-sm">
+  <q-card class="q-mb-sm q-pa-none">
     <q-card-section class="text-center" v-if="tasklist === undefined">
       Loading... <q-spinner-rings color="grey" size="md" />
     </q-card-section>
     <template v-else>
-      <q-bar dense class="bg-card-head hover_ctrl">
-        <div class="text-weight-bold">TaskList</div>
-        <q-btn-group outline class="hover_block">
-          <q-btn
-            dense
-            flat
-            @click="$emit('moveBlock', 'left')"
-            icon="keyboard_arrow_left"
-            :disabled="!actions.moveleft"
-          >
-            <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block left </q-tooltip>
-          </q-btn>
-          <q-btn dense flat @click="$emit('moveBlock', 'up')" icon="keyboard_arrow_up" :disabled="!actions.moveup">
-            <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block up </q-tooltip>
-          </q-btn>
-          <q-btn
-            dense
-            flat
-            @click="$emit('moveBlock', 'down')"
-            icon="keyboard_arrow_down"
-            :disabled="!actions.movedown"
-          >
-            <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block down </q-tooltip>
-          </q-btn>
-          <q-btn
-            dense
-            flat
-            @click="$emit('moveBlock', 'right')"
-            icon="keyboard_arrow_right"
-            :disabled="!actions.moveright"
-          >
-            <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move block right </q-tooltip>
-          </q-btn>
-        </q-btn-group>
-        <q-space />
+      <q-bar dense class="bg-white hover_ctrl q-pa-none">
+        <div class="drag_handler q-space" style="text-align: left; font-weight: bold">TaskList</div>
         <q-btn flat dense round color="orange" v-on:click="save" icon="save" size="xs" v-if="tasklist.saved === false">
           <q-tooltip :delay="550" anchor="top middle" self="center middle"> Save list </q-tooltip>
         </q-btn>

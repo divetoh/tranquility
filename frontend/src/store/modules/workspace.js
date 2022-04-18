@@ -135,31 +135,14 @@ export default {
       var cnt = state.workspace_lst[workspace].workspace.content;
       if (cnt[col] != undefined && cnt[col].content[row] != undefined) cnt[col].content.splice(row, 1);
     },
-    workspaceBlockMove(state, { workspace, row, col, direction }) {
+    workspaceBlockMove(state, { workspace, from_row, from_col, to_row, to_col }) {
       var cnt = state.workspace_lst[workspace].workspace.content;
-      if (cnt[col] == undefined || cnt[col].content[row] == undefined) return;
-      switch (direction) {
-        case "left":
-          if (col > 0) {
-            cnt[col - 1].content.push(cnt[col].content[row]);
-            cnt[col].content.splice(row, 1);
-          }
-          break;
-        case "right":
-          if (cnt[col + 1] != undefined) {
-            cnt[col + 1].content.push(cnt[col].content[row]);
-            cnt[col].content.splice(row, 1);
-          }
-          break;
-        case "up":
-          if (row > 0)
-            [cnt[col].content[row], cnt[col].content[row - 1]] = [cnt[col].content[row - 1], cnt[col].content[row]];
-          break;
-        case "down":
-          if (cnt[col].content[row + 1] != undefined)
-            [cnt[col].content[row], cnt[col].content[row + 1]] = [cnt[col].content[row + 1], cnt[col].content[row]];
-          break;
-      }
+      if (cnt[from_col] == undefined || cnt[from_col].content[from_row] == undefined) return;
+      if (cnt[to_col] == undefined || cnt[to_col].content.lenght < to_row) return;
+      const block = cnt[from_col].content[from_row];
+      cnt[to_col].content.splice(to_row, 0, block);
+      if (to_col == from_col && to_row <= from_row) from_row += 1;
+      cnt[from_col].content.splice(from_row, 1);
     },
     workspaceSetColumnName(state, { workspace, name, index }) {
       state.workspace_lst[workspace].workspace.content[index].name = name;

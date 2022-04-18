@@ -1,5 +1,13 @@
 <template>
-  <div class="ws_wrap scroll6">
+  <div
+    class="ws_wrap scroll6"
+    @dragover="dragover"
+    @dragenter="dragenter"
+    @dragleave="dragleave"
+    @drop="drop"
+    @scroll="scroll"
+    ref="wrapperRef"
+  >
     <div class="ws_col_container w400" v-for="(column, index) in workspace.workspace.content" :key="column.type">
       <div class="ws_col_wrap">
         <!-- Column header -->
@@ -42,15 +50,9 @@
         </q-bar>
         <!-- Column content -->
         <div class="ws_col_content scroll6">
-          <BlockWrapper
-            v-for="(block, row) in column.content"
-            :block="block"
-            :key="block.uid"
-            :workspace="uid"
-            :row="row"
-            :col="index"
-            :v-if="false"
-          />
+          <template v-for="(block, row) in column.content" :key="block.uid">
+            <BlockWrapper :block="block" :workspace="uid" :row="row" :col="index" />
+          </template>
           <!-- Column footer button block -->
           <q-btn-group rounded class="bg-white">
             <q-btn icon="article" size="sm" v-on:click="createBlockMD(index)" />
@@ -63,6 +65,7 @@
     <div class="ws_col_container">
       <q-btn class="bg-white" round icon="add" size="sm" v-on:click="addCol" />
     </div>
+    <div class="dropzone" ref="dropzone" />
   </div>
 </template>
 
@@ -81,8 +84,109 @@ export default {
     if (this.$store.state.workspace.workspace_lst[this.uid] === undefined) {
       await this.$store.dispatch("aWorkspaceLoad", this.uid);
     }
+    this.vars = {
+      dragEnterLevel: 0,
+      dragLines: [],
+      col: -1,
+      row: -1,
+    };
   },
   methods: {
+    // --- Dragging metods ---
+    drop: function () {
+      if (this.vars.row != -1) {
+        this.$store.dispatch("aWorkspaceBlockMove", {
+          workspace: this.uid,
+          from_row: this.$dragState.object.row,
+          from_col: this.$dragState.object.col,
+          to_row: this.vars.row,
+          to_col: this.vars.col,
+        });
+      }
+      // Reset dragging variables
+      this.$refs["dropzone"].style.display = "none";
+      this.vars.dragLines = [];
+      this.vars.col = -1;
+      this.vars.row = -1;
+      this.vars.dragEnterLevel = 0;
+    },
+    dragover: function (event) {
+      if (this.dragEnterLevel == 0) return;
+      if (this.vars.dragLines.length == 0) return;
+      // Сheck the possibility of transfer
+      var row = -1;
+      var col = -1;
+      for (const _col in this.vars.dragLines) {
+        if (event.x < this.vars.dragLines[_col].x1 || event.x > this.vars.dragLines[_col].x2) continue;
+        col = parseInt(_col);
+        for (const _row in this.vars.dragLines[col].y) {
+          if (Math.abs(this.vars.dragLines[col].y[_row] - event.y) > 30) continue;
+          row = parseInt(_row);
+          if (
+            col == this.$dragState.object.col &&
+            (row == this.$dragState.object.row || row == this.$dragState.object.row + 1)
+          )
+            row = -1;
+          break;
+        }
+        break;
+      }
+      if (col == this.vars.col && row == this.vars.row) {
+        event.preventDefault();
+        return;
+      }
+      // Highlight dropzone
+      const dz = this.$refs["dropzone"].style;
+      const wrap = this.$refs["wrapperRef"];
+      const x_off = wrap.scrollLeft + wrap.getBoundingClientRect().x;
+      const y_off = wrap.scrollTop + wrap.getBoundingClientRect().y;
+
+      this.vars.col = col;
+      this.vars.row = row;
+      if (row == -1) {
+        dz.display = "none";
+      } else {
+        dz.display = "block";
+        dz.left = this.vars.dragLines[col].x1 + x_off - 5 + "px";
+        dz.width = this.vars.dragLines[col].x2 - this.vars.dragLines[col].x1 + 10 + "px";
+        dz.top = this.vars.dragLines[col].y[row] - 30 - y_off + "px";
+        dz.height = "60px";
+      }
+      event.preventDefault();
+    },
+    dragleave: function () {
+      this.vars.dragEnterLevel -= 1;
+      if (this.vars.dragEnterLevel > 0) return;
+      // Cursor moved out from component or drag ending.
+      this.$refs["dropzone"].style.display = "none";
+      this.vars.dragLines = [];
+      this.vars.col = -1;
+      this.vars.row = -1;
+    },
+    dragenter: function () {
+      this.vars.dragEnterLevel += 1;
+      if (this.vars.dragEnterLevel != 1) return;
+      // Store avaliable drag positions in this.vars.dragLines
+      this.calc_drag_grid();
+    },
+    calc_drag_grid: function () {
+      this.vars.dragLines = [];
+      const cols = this.$refs.wrapperRef.getElementsByClassName("ws_col_content");
+      for (var i = 0; i < cols.length; i++) {
+        const br = cols[i].getBoundingClientRect();
+        var col = { x1: br.x, x2: br.right, y: [br.y] };
+        var blocks = cols[i].getElementsByClassName("block_wrapper");
+        for (var j = 0; j < blocks.length; j++) {
+          const br2 = blocks[j].getBoundingClientRect();
+          col.y.push(br2.bottom + 4);
+        }
+        this.vars.dragLines.push(col);
+      }
+    },
+    scroll: function () {
+      if (this.vars.dragEnterLevel > 0) this.calc_drag_grid();
+    },
+    // --- Action metods ---
     createBlockMD: async function (column) {
       var markdown = await this.$store.dispatch("aMarkdownCreate", {
         name: "Workspace block",
