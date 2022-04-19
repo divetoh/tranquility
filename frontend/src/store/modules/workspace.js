@@ -69,8 +69,8 @@ export default {
       commit("workspaceColumnAdd", { workspace });
       await dispatch("aWorkspaceSave", workspace);
     },
-    async aWorkspaceColumnMoveLeft({ commit, dispatch }, payload) {
-      commit("workspaceColumnMoveLeft", payload);
+    async aWorkspaceColumnMove({ commit, dispatch }, payload) {
+      commit("workspaceColumnMove", payload);
       await dispatch("aWorkspaceSave", payload.workspace);
     },
     async aWorkspaceColumnDelete({ commit, dispatch }, payload) {
@@ -124,9 +124,13 @@ export default {
         content: [],
       });
     },
-    workspaceColumnMoveLeft(state, { workspace, index }) {
+    workspaceColumnMove(state, { workspace, from_col, to_col }) {
       var cnt = state.workspace_lst[workspace].workspace.content;
-      if (index > 0 && cnt[index] != undefined) [cnt[index - 1], cnt[index]] = [cnt[index], cnt[index - 1]];
+      if (cnt.lenght < to_col || cnt[from_col] == undefined) return;
+      const col = cnt[from_col];
+      cnt.splice(to_col, 0, col);
+      if (to_col <= from_col) from_col += 1;
+      cnt.splice(from_col, 1);
     },
     workspaceColumnDelete(state, { workspace, index }) {
       state.workspace_lst[workspace].workspace.content.splice(index, 1);

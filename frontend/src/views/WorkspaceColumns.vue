@@ -11,24 +11,23 @@
     <div class="ws_col_container w400" v-for="(column, index) in workspace.workspace.content" :key="column.type">
       <div class="ws_col_wrap">
         <!-- Column header -->
-        <q-bar class="bg-transparent hover_ctrl" style="display: block; margin: 0px 0px 14px" dense>
-          <q-chip square text-color="white" class="bg-topbar q-pa-xs q-mb-md" style="width: 100%">
-            <q-btn-group outline class="hover_block">
-              <q-btn dense flat v-on:click="moveColLeft(index)" icon="keyboard_arrow_left" :disabled="index == 0">
-                <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move Column Left </q-tooltip>
-              </q-btn>
-              <q-btn
-                dense
-                flat
-                v-on:click="moveColLeft(index + 1)"
-                icon="keyboard_arrow_right"
-                :disabled="index == workspace.workspace.content.length - 1"
-              >
-                <q-tooltip :delay="550" anchor="top middle" self="center middle"> Move Column Right </q-tooltip>
-              </q-btn>
-            </q-btn-group>
+        <q-bar
+          class="bg-transparent hover_ctrl draggable ws_col_header"
+          style="display: block; margin: 0px 0px 14px"
+          dense
+        >
+          <q-chip
+            square
+            text-color="white"
+            class="bg-topbar q-pa-xs q-mb-md drag_handler"
+            style="width: 100%"
+            @dragstart="dragColumnStart"
+            @dragend="dragColumnEnd"
+            draggable="True"
+            :data-col="index"
+          >
             <q-space />
-            <div>
+            <div style="cursor: pointer">
               &nbsp;{{ column.name }}&nbsp;
               <q-popup-edit
                 buttons
@@ -42,7 +41,7 @@
             </div>
             <q-space />
             <q-btn-group outline class="hover_block">
-              <q-btn dense flat v-on:click="delCol(index)" icon="delete">
+              <q-btn dense flat v-on:click="deleteColumn(index)" icon="delete">
                 <q-tooltip :delay="550" anchor="top middle" self="center middle"> Delete column </q-tooltip>
               </q-btn>
             </q-btn-group>
@@ -55,7 +54,7 @@
           </template>
           <!-- Column footer button block -->
           <q-btn-group rounded class="bg-white">
-            <q-btn icon="article" size="sm" v-on:click="createBlockMD(index)" />
+            <q-btn icon="article" size="sm" v-on:click="createBlockMarkdown(index)" />
             <q-btn icon="more_horiz" size="sm" v-on:click="createBlockDialog(index)" />
           </q-btn-group>
         </div>
@@ -63,7 +62,7 @@
     </div>
     <!-- Right button block -->
     <div class="ws_col_container">
-      <q-btn class="bg-white" round icon="add" size="sm" v-on:click="addCol" />
+      <q-btn class="bg-white" round icon="add" size="sm" v-on:click="addColumn" />
     </div>
     <div class="dropzone" ref="dropzone" />
   </div>
@@ -85,16 +84,32 @@ export default {
       await this.$store.dispatch("aWorkspaceLoad", this.uid);
     }
     this.vars = {
-      dragEnterLevel: 0,
-      dragLines: [],
+      dropenter_level: 0,
+      drop_grid: [],
       col: -1,
       row: -1,
     };
   },
   methods: {
-    // --- Dragging metods ---
+    // --- Column header drag ---
+    dragColumnStart: function (event) {
+      this.$dragState.objectType = "WSColumn";
+      this.$dragState.object = {
+        workspace: this.uid,
+        col: parseInt(event.target.dataset.col),
+      };
+      event.target.parentElement.parentElement.style.opacity = 0.5;
+    },
+    dragColumnEnd: function (event) {
+      this.$dragState.objectType = "";
+      this.$dragState.object = {};
+      event.target.parentElement.parentElement.style.opacity = "";
+    },
+
+    // --- Drag'n'drop metods ---
     drop: function () {
-      if (this.vars.row != -1) {
+      // Drag'n'drop action complited, object dropped.
+      if (this.$dragState.objectType == "WSBlock" && this.vars.row != -1) {
         this.$store.dispatch("aWorkspaceBlockMove", {
           workspace: this.uid,
           from_row: this.$dragState.object.row,
@@ -102,26 +117,33 @@ export default {
           to_row: this.vars.row,
           to_col: this.vars.col,
         });
+      } else if (this.$dragState.objectType == "WSColumn" && this.vars.col != -1) {
+        this.$store.dispatch("aWorkspaceColumnMove", {
+          workspace: this.uid,
+          from_col: this.$dragState.object.col,
+          to_col: this.vars.col,
+        });
       }
-      // Reset dragging variables
-      this.$refs["dropzone"].style.display = "none";
-      this.vars.dragLines = [];
-      this.vars.col = -1;
-      this.vars.row = -1;
-      this.vars.dragEnterLevel = 0;
+      this.$_cleanDropstate();
     },
     dragover: function (event) {
-      if (this.dragEnterLevel == 0) return;
-      if (this.vars.dragLines.length == 0) return;
-      // Сheck the possibility of transfer
+      // Dragging object over workspace. If object is acceptable - check for intersection of dropzone.
+      if (this.dropenter_level == 0) return;
+      if (this.vars.drop_grid.length == 0) return;
+      if (this.$dragState.objectType == "WSBlock") this.dragoverBlock(event);
+      else if (this.$dragState.objectType == "WSColumn") this.dragoverColumn(event);
+    },
+    dragoverBlock: function (event) {
+      // Checking for intersection of dropzones when dragging Workspace Blocks.
       var row = -1;
       var col = -1;
-      for (const _col in this.vars.dragLines) {
-        if (event.x < this.vars.dragLines[_col].x1 || event.x > this.vars.dragLines[_col].x2) continue;
+      for (const _col in this.vars.drop_grid) {
+        if (event.x < this.vars.drop_grid[_col].x1 || event.x > this.vars.drop_grid[_col].x2) continue;
         col = parseInt(_col);
-        for (const _row in this.vars.dragLines[col].y) {
-          if (Math.abs(this.vars.dragLines[col].y[_row] - event.y) > 30) continue;
+        for (const _row in this.vars.drop_grid[col].y) {
+          if (Math.abs(this.vars.drop_grid[col].y[_row] - event.y) > 30) continue;
           row = parseInt(_row);
+          // Disable dragging object to it's old location
           if (
             col == this.$dragState.object.col &&
             (row == this.$dragState.object.row || row == this.$dragState.object.row + 1)
@@ -135,59 +157,118 @@ export default {
         event.preventDefault();
         return;
       }
-      // Highlight dropzone
-      const dz = this.$refs["dropzone"].style;
-      const wrap = this.$refs["wrapperRef"];
-      const x_off = wrap.scrollLeft + wrap.getBoundingClientRect().x;
-      const y_off = wrap.scrollTop + wrap.getBoundingClientRect().y;
-
       this.vars.col = col;
       this.vars.row = row;
-      if (row == -1) {
-        dz.display = "none";
-      } else {
-        dz.display = "block";
-        dz.left = this.vars.dragLines[col].x1 + x_off - 5 + "px";
-        dz.width = this.vars.dragLines[col].x2 - this.vars.dragLines[col].x1 + 10 + "px";
-        dz.top = this.vars.dragLines[col].y[row] - 30 - y_off + "px";
-        dz.height = "60px";
+
+      // Highlight dropzone
+      if (row == -1) this.$_hideDropzone();
+      else {
+        const wrap = this.$refs["wrapperRef"];
+        const x_off = this.vars.drop_grid[col].x1 + wrap.scrollLeft + wrap.getBoundingClientRect().x;
+        const y_off = this.vars.drop_grid[col].y[row] - (wrap.scrollTop + wrap.getBoundingClientRect().y);
+        const width = this.vars.drop_grid[col].x2 - this.vars.drop_grid[col].x1;
+        this.$_showDropzone(x_off - 5, y_off - 30, width + 10, 60);
       }
       event.preventDefault();
     },
+    dragoverColumn: function (event) {
+      // Checking for intersection of dropzones when dragging Workspace Column.
+      var col = -1;
+      for (const _col in this.vars.drop_grid) {
+        if (Math.abs(event.x - this.vars.drop_grid[_col].x) > 60) continue;
+        if (Math.abs(event.y - this.vars.drop_grid[_col].y) > 60) break;
+        col = parseInt(_col);
+        // Disable dragging object to it's old location
+        if (col == this.$dragState.object.col || col == this.$dragState.object.col + 1) col = -1;
+        break;
+      }
+      if (col == this.vars.col) {
+        event.preventDefault();
+        return;
+      }
+      this.vars.col = col;
+      // Highlight dropzone
+      if (col == -1) this.$_hideDropzone();
+      else {
+        const wrap = this.$refs["wrapperRef"];
+        const x_off = this.vars.drop_grid[col].x + wrap.scrollLeft + wrap.getBoundingClientRect().x;
+        const y_off = this.vars.drop_grid[col].y - (wrap.scrollTop + wrap.getBoundingClientRect().y);
+        this.$_showDropzone(x_off - 30, y_off - 20, 60, 100);
+      }
+      event.preventDefault();
+    },
+    dragenter: function () {
+      // Dragging enter workspace area. Initialize drag'n'drop state if object acceptable.
+      if (this.$dragState.objectType != "WSColumn" && this.$dragState.objectType != "WSBlock") return;
+      this.vars.dropenter_level += 1;
+      if (this.vars.dropenter_level != 1) return;
+      // If dragging just started - calculate dropzones grid
+      this.$_calcDragGrid();
+    },
     dragleave: function () {
-      this.vars.dragEnterLevel -= 1;
-      if (this.vars.dragEnterLevel > 0) return;
+      // Dragging leave workspace area
+      if (this.$dragState.objectType != "WSColumn" && this.$dragState.objectType != "WSBlock") return;
+      this.vars.dropenter_level -= 1;
+      if (this.vars.dropenter_level > 0) return;
       // Cursor moved out from component or drag ending.
+      this.$_cleanDropstate();
+    },
+    scroll: function () {
+      // Recalculate dropzones grid if workspace scrolled
+      if (this.vars.dropenter_level > 0) this.$_calcDragGrid();
+    },
+
+    // --- Internal functions for drag'n'drop ---
+    $_hideDropzone: function () {
+      // Hide dropzone highlight
       this.$refs["dropzone"].style.display = "none";
-      this.vars.dragLines = [];
+    },
+    $_showDropzone: function (x, y, w, h) {
+      // Show dropzone highlight
+      this.$refs["dropzone"].style.display = "block";
+      this.$refs["dropzone"].style.left = x + "px";
+      this.$refs["dropzone"].style.width = w + "px";
+      this.$refs["dropzone"].style.top = y + "px";
+      this.$refs["dropzone"].style.height = h + "px";
+    },
+    $_cleanDropstate: function () {
+      // Clean dropstate and hide dropzone
+      this.$_hideDropzone();
+      this.vars.dropenter_level = 0;
+      this.vars.drop_grid = [];
       this.vars.col = -1;
       this.vars.row = -1;
     },
-    dragenter: function () {
-      this.vars.dragEnterLevel += 1;
-      if (this.vars.dragEnterLevel != 1) return;
-      // Store avaliable drag positions in this.vars.dragLines
-      this.calc_drag_grid();
-    },
-    calc_drag_grid: function () {
-      this.vars.dragLines = [];
-      const cols = this.$refs.wrapperRef.getElementsByClassName("ws_col_content");
-      for (var i = 0; i < cols.length; i++) {
-        const br = cols[i].getBoundingClientRect();
-        var col = { x1: br.x, x2: br.right, y: [br.y] };
-        var blocks = cols[i].getElementsByClassName("block_wrapper");
-        for (var j = 0; j < blocks.length; j++) {
-          const br2 = blocks[j].getBoundingClientRect();
-          col.y.push(br2.bottom + 4);
+    $_calcDragGrid: function () {
+      // Calculate avaliable dropzones for current workspace and object type
+      var i, col;
+      this.vars.drop_grid = [];
+      if (this.$dragState.objectType == "WSBlock") {
+        // Calculate drop zones for Workspace Block
+        const cols = this.$refs.wrapperRef.getElementsByClassName("ws_col_content");
+        for (i = 0; i < cols.length; i++) {
+          const br = cols[i].getBoundingClientRect();
+          col = { x1: br.x, x2: br.right, y: [br.y] };
+          var blocks = cols[i].getElementsByClassName("block_wrapper");
+          for (var j = 0; j < blocks.length; j++) {
+            const br2 = blocks[j].getBoundingClientRect();
+            col.y.push(br2.bottom + 4);
+          }
+          this.vars.drop_grid.push(col);
         }
-        this.vars.dragLines.push(col);
+      } else if (this.$dragState.objectType == "WSColumn") {
+        // Calculate drop zones for Workspace Column
+        const cols = this.$refs.wrapperRef.getElementsByClassName("ws_col_header");
+        for (i = 0; i < cols.length; i++) {
+          const br = cols[i].getBoundingClientRect();
+          this.vars.drop_grid.push({ x: br.x - 14, y: br.y + br.height / 2 });
+          if (i == cols.length - 1) this.vars.drop_grid.push({ x: br.right + 14, y: br.y + br.height / 2 });
+        }
       }
     },
-    scroll: function () {
-      if (this.vars.dragEnterLevel > 0) this.calc_drag_grid();
-    },
+
     // --- Action metods ---
-    createBlockMD: async function (column) {
+    createBlockMarkdown: async function (column) {
       var markdown = await this.$store.dispatch("aMarkdownCreate", {
         name: "Workspace block",
         md: "New block.",
@@ -207,7 +288,7 @@ export default {
       }).onOk((data) => {
         switch (data) {
           case "markdown":
-            this.createBlockMD(column);
+            this.createBlockMarkdown(column);
             break;
           case "coretasklist":
             this.$store.dispatch("aWorkspaceColumnAppendBlock", {
@@ -219,18 +300,12 @@ export default {
         }
       });
     },
-    addCol: async function () {
+    addColumn: async function () {
       await this.$store.dispatch("aWorkspaceColumnAdd", {
         workspace: this.uid,
       });
     },
-    moveColLeft: async function (index) {
-      await this.$store.dispatch("aWorkspaceColumnMoveLeft", {
-        workspace: this.uid,
-        index,
-      });
-    },
-    delCol: async function (index) {
+    deleteColumn: async function (index) {
       this.$q
         .dialog({
           title: "Confirm",

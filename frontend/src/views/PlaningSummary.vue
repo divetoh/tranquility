@@ -10,7 +10,7 @@
       <q-input
         outlined
         bottom-slots
-        @change="save_description"
+        @change="saveDescription"
         :model-value="daystate.description"
         counter
         maxlength="2048"
@@ -20,7 +20,7 @@
           <q-rating
             size="18px"
             :model-value="daystate.rating"
-            @update:model-value="save_rating"
+            @update:model-value="saveRating"
             :max="5"
             color="primary"
           />
@@ -96,11 +96,10 @@ export default {
       await this.$store.dispatch("aRegulartaskstateLoad", this.current_date);
   },
   methods: {
-    save_rating: async function (rating) {
+    saveRating: async function (rating) {
       await this.$store.dispatch("aDaystateSetRating", { statedate: this.current_date, rating });
     },
-    save_description: async function (description) {
-      console.log("Saving");
+    saveDescription: async function (description) {
       await this.$store.dispatch("aDaystateSetDescription", { statedate: this.current_date, description });
     },
   },

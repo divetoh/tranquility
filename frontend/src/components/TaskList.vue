@@ -39,7 +39,7 @@ import TaskListLine from "@/components/items/TaskListLine";
 export default {
   name: "TaskList",
   props: ["uid", "actions"],
-  emits: ["moveBlock", "delBlock"],
+  emits: ["delBlock"],
   data() {
     return {
       tluid: this.uid,

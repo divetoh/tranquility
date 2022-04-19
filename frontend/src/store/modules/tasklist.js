@@ -42,7 +42,6 @@ export default {
       dispatch("aTasklistSaveDebounce", payload.uid);
     },
     async aTasklistSetText({ commit, dispatch }, payload) {
-      console.log(payload);
       commit("tasklistSetItemText", payload);
       dispatch("aTasklistSaveDebounce", payload.uid);
     },

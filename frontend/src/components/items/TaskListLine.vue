@@ -5,7 +5,7 @@
         <q-btn color="blue" flat dense round v-on:click="done" icon="done" size="sm">
           <q-tooltip :delay="550" anchor="top middle" self="center middle">Complete task</q-tooltip>
         </q-btn>
-        <q-btn color="blue" flat dense round v-on:click="deltask" icon="delete" size="sm">
+        <q-btn color="blue" flat dense round v-on:click="deleteTask" icon="delete" size="sm">
           <q-tooltip :delay="550" anchor="top middle" self="center middle">Delete task</q-tooltip>
         </q-btn>
       </div>
@@ -39,13 +39,10 @@ export default {
       } else if (this.tasklistline.text != "") {
         await this.$store.dispatch("aDaystateAddComplited", this.tasklistline.text);
       }
-      await this.deltask();
+      await this.deleteTask();
     },
-    deltask: async function () {
+    deleteTask: async function () {
       await this.$store.dispatch("aTaskListDelItem", { uid: this.uid, index: this.index });
-    },
-    edit: async function () {
-      console.log(this.uid);
     },
   },
   computed: {

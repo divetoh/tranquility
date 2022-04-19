@@ -116,20 +116,12 @@ tbody .qtable_inactive_row td {
   border-radius: 10px;
 }
 
-.dropzone {
-  border-radius: 2px;
-  display: none;
-  position: absolute;
-  top: 0px;
-  bottom: 0px;
-  width: 200px;
-  height: 200px;
-  background-color: #ff9800;
-  opacity: 0.5;
-  z-index: 1000;
-}
 .draggable .drag_handler {
   cursor: move;
+}
+
+.block_wrapper {
+  white-space: normal;
 }
 
 .block_wrapper .drag_handler {
@@ -140,7 +132,34 @@ tbody .qtable_inactive_row td {
   border-top-left-radius: 4px;
 }
 
-.block_wrapper {
-  white-space: normal;
+.dropzone {
+  border-radius: 2px;
+  display: none;
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 200px;
+  height: 200px;
+  background-color: #027be3; /*#ffa620;*/
+  opacity: 0.5;
+  z-index: 1000;
+  box-shadow: 0 0 0 0 #027be3ff;
+  transform: scale(1);
+  animation: anim_pulse 2s infinite;
+}
+
+@keyframes anim_pulse {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 #027be3a0;
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 10px #027be300;
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 #027be300;
+  }
 }
 </style>

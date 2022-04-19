@@ -3,12 +3,12 @@
     class="draggable block_wrapper"
     draggable="True"
     @mousedown="mousedown"
-    v-on:dragstart="dragStart"
-    v-on:dragend="dragEnd"
+    @dragstart="dragStart"
+    @dragend="dragEnd"
     ref="wrapperRef"
   >
     <BlockMarkdown v-if="block.type == 'markdown'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
-    <TaskList v-if="block.type == 'coretasklist'" :actions="actions" @moveBlock="moveBlock" @delBlock="delBlock" />
+    <TaskList v-if="block.type == 'coretasklist'" :actions="actions" @delBlock="delBlock" />
   </div>
 </template>
 
@@ -63,13 +63,8 @@ export default {
     },
   },
   computed: mapState({
-    actions(state) {
-      const ws = state.workspace.workspace_lst[this.workspace].workspace;
+    actions() {
       return {
-        moveleft: this.col > 0,
-        moveright: this.col < ws.content.length - 1,
-        moveup: this.row > 0,
-        movedown: this.row < ws.content[this.col].content.length - 1,
         delblock: true,
       };
     },
