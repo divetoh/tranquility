@@ -12,7 +12,7 @@ Generic parameters:
 * UpdateSchemaType - pydantic schema for object update request
 """
 
-from typing import Any, Dict, Generic, List, Optional, Type, TypeVar, Union
+from typing import Any, Generic, Optional, Type, TypeVar, Union
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
@@ -50,7 +50,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             raise HTTPException(status_code=404, detail="Object not found.")
         return result
 
-    async def get_multi(self, db: AsyncSession, *, skip: int = 0, limit: int = 100) -> List[ModelType]:
+    async def get_multi(self, db: AsyncSession, *, skip: int = 0, limit: int = 100) -> list[ModelType]:
         result = await db.execute(select(self.model).offset(skip).limit(limit))
         return result.scalars().all()
 
@@ -67,7 +67,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db: AsyncSession,
         *,
         uid: int,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+        obj_in: Union[UpdateSchemaType, dict[str, Any]],
     ) -> ModelType:
         """
         Update object in DB. Only filled fields will be updated.
@@ -89,7 +89,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db: AsyncSession,
         *,
         db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+        obj_in: Union[UpdateSchemaType, dict[str, Any]],
     ) -> ModelType:
         """
         Update object in DB. Only filled fields will be updated.
@@ -168,7 +168,7 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         if result != user:
             raise HTTPException(status_code=403, detail="Access denied.")
 
-    async def get_multi(self, db: AsyncSession, user: int, *, skip: int = 0, limit: int = 100) -> List[AuthModelType]:
+    async def get_multi(self, db: AsyncSession, user: int, *, skip: int = 0, limit: int = 100) -> list[AuthModelType]:
         """
         Get objects from DB. Skip, limit - for slicing query result.
 
@@ -192,7 +192,7 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         user: int,
         *,
         uid: int,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+        obj_in: Union[UpdateSchemaType, dict[str, Any]],
     ) -> AuthModelType:
         """
         Update object in DB. Only filled fields will be updated.
@@ -215,7 +215,7 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         db: AsyncSession,
         *,
         db_obj: AuthModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
+        obj_in: Union[UpdateSchemaType, dict[str, Any]],
     ) -> AuthModelType:
         """
         Update object in DB. Only filled fields will be updated.

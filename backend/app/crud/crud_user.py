@@ -1,4 +1,4 @@
-from typing import Any, Dict, Optional, Union
+from typing import Any, Optional, Union
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -51,7 +51,7 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         obj_upd = {"coreactivity": activity.uid, "coretasklist": tasklist.uid}
         return await self.update_byobj(db=db, db_obj=db_obj, obj_in=obj_upd)
 
-    async def update_byobj(self, db: AsyncSession, db_obj: User, *, obj_in: Union[SUserUpdate, Dict[str, Any]]) -> User:
+    async def update_byobj(self, db: AsyncSession, db_obj: User, *, obj_in: Union[SUserUpdate, dict[str, Any]]) -> User:
         """
         Update user record.
         If updating password - make hashed_password

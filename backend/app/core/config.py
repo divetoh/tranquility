@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional
+from typing import Any, Optional
 
 from pydantic import AnyHttpUrl, BaseSettings, EmailStr, validator
 
@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     SQLALCHEMY_DATABASE_URI: Optional[str] = None
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
-    def assemble_db_connection(cls, v: Optional[str], values: Dict[str, Any]) -> Any:
+    def assemble_db_connection(cls, v: Optional[str], values: dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
         user = values.get("MYSQL_USER")
@@ -27,10 +27,10 @@ class Settings(BaseSettings):
         return f"mysql+aiomysql://{user}:{password}@{host}:3306/{db}"
 
     BACKEND_CORS_ORIGINS: Optional[str]
-    BACKEND_CORS_ORIGINS_LIST: Optional[List[AnyHttpUrl]] = None
+    BACKEND_CORS_ORIGINS_LIST: Optional[list[AnyHttpUrl]] = None
 
     @validator("BACKEND_CORS_ORIGINS_LIST", pre=True)
-    def assemble_cors_origins(cls, v: Optional[str], values: Dict[str, Any]) -> Optional[List[AnyHttpUrl]]:
+    def assemble_cors_origins(cls, v: Optional[str], values: dict[str, Any]) -> Optional[list[AnyHttpUrl]]:
         cors = values.get("BACKEND_CORS_ORIGINS")
         if cors is None:
             return None

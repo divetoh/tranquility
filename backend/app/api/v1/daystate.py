@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -27,7 +27,7 @@ async def read_daystate(
     return daystate
 
 
-@router.get("/", response_model=List[schemas.SDayStateOut])
+@router.get("/", response_model=list[schemas.SDayStateOut])
 async def read_daystate_multi(
     start: date,
     end: date,

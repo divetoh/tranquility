@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -21,7 +21,7 @@ async def read_jsondoc_by_id(
     return await crud.jsondoc.get(_db, _user.uid, uid=uid, r404=True)
 
 
-@router.get("/", response_model=List[schemas.SJSONDocOut])
+@router.get("/", response_model=list[schemas.SJSONDocOut])
 async def read_jsondoc_multi(
     doctype: str,
     _db: AsyncSession = Depends(deps.get_db),

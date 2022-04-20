@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List, Optional
+from typing import Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,7 @@ from app.api import deps, resp
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.SDailyTaskOut])
+@router.get("/", response_model=list[schemas.SDailyTaskOut])
 async def read_dailytask(
     skip: int = 0,
     limit: int = 1000,

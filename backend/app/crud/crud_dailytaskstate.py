@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import delete, select
@@ -20,7 +20,7 @@ class CRUDDailyTaskState():
         )
         return (await db.execute(query)).scalars().first()
 
-    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> List[SDailyTaskStateOut]:
+    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> list[SDailyTaskStateOut]:
         query = select(DailyTaskState).join(DailyTask).filter(
             DailyTask.user == user,
             DailyTaskState.statedate == statedate,
@@ -34,7 +34,7 @@ class CRUDDailyTaskState():
         *,
         start: date,
         end: date,
-    ) -> List[SDailyTaskStateOut]:
+    ) -> list[SDailyTaskStateOut]:
         """ Return all user's DailyTaskState for date in range. """
         query = select(DailyTaskState).join(DailyTask).filter(
             DailyTask.user == user,
@@ -57,7 +57,7 @@ class CRUDDailyTaskState():
         db: AsyncSession,
         *,
         db_obj: DailyTaskState,
-        obj_in: Union[SDailyTaskStateUpdate, Dict[str, Any]],
+        obj_in: Union[SDailyTaskStateUpdate, dict[str, Any]],
     ) -> DailyTaskState:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):

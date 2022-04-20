@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Optional, Union
 
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
@@ -18,7 +18,7 @@ class CRUDDayState():
         res = result.scalars().first()
         return res
 
-    async def get_multi_bydate(self, db: AsyncSession, user: int, *, start: date, end: date) -> List[DayState]:
+    async def get_multi_bydate(self, db: AsyncSession, user: int, *, start: date, end: date) -> list[DayState]:
         """ Get daystates from DB for date range. """
         result = await db.execute(select(DayState).filter(
             DayState.user == user,
@@ -40,7 +40,7 @@ class CRUDDayState():
         db: AsyncSession,
         *,
         db_obj: DayState,
-        obj_in: Union[SDayStateUpdate, Dict[str, Any]],
+        obj_in: Union[SDayStateUpdate, dict[str, Any]],
     ) -> DayState:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):

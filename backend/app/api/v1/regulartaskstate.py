@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -11,7 +11,7 @@ from app.api import deps, resp
 router = APIRouter()
 
 
-@router.get("/{statedate}", response_model=List[schemas.SRegularTaskStateOut])
+@router.get("/{statedate}", response_model=list[schemas.SRegularTaskStateOut])
 async def read_regulartaskstate(
     statedate: date,
     db: AsyncSession = Depends(deps.get_db),
@@ -23,7 +23,7 @@ async def read_regulartaskstate(
     return await crud.regulartaskstate.get_multi(db, statedate=statedate, user=current_user.uid)
 
 
-@router.get("/", response_model=List[schemas.SRegularTaskStateOut])
+@router.get("/", response_model=list[schemas.SRegularTaskStateOut])
 async def read_regulartaskstate_multi(
     start: date,
     end: date,

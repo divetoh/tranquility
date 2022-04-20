@@ -1,5 +1,4 @@
 from datetime import date
-from typing import List
 
 from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -12,7 +11,7 @@ from .crud_regulartask import regulartask as crud_regulartask
 
 
 class CRUDRegularTaskState():
-    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> List[SRegularTaskStateOut]:
+    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> list[SRegularTaskStateOut]:
         query = select(RegularTaskState).join(RegularTask).filter(
             RegularTask.user == user,
             RegularTaskState.statedate == statedate,
@@ -26,7 +25,7 @@ class CRUDRegularTaskState():
         *,
         start: date,
         end: date,
-    ) -> List[SRegularTaskStateOut]:
+    ) -> list[SRegularTaskStateOut]:
         """ Return all user's RegularTaskState for date in range. """
         query = select(RegularTaskState).join(RegularTask).filter(
             RegularTask.user == user,

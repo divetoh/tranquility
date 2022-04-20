@@ -1,5 +1,5 @@
 from datetime import date
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,7 @@ from app.api import deps, resp
 router = APIRouter()
 
 
-@router.get("/{statedate}", response_model=List[schemas.SDailyTaskStateOut])
+@router.get("/{statedate}", response_model=list[schemas.SDailyTaskStateOut])
 async def read_dailytaskstate(
     statedate: date,
     _db: AsyncSession = Depends(deps.get_db),
@@ -32,7 +32,7 @@ async def read_dailytaskstate(
     return result
 
 
-@router.get("/", response_model=List[schemas.SDailyTaskStateOut])
+@router.get("/", response_model=list[schemas.SDailyTaskStateOut])
 async def read_dailytaskstate_multi(
     start: date,
     end: date,

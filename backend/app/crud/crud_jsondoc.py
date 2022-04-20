@@ -1,4 +1,3 @@
-from typing import List
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -8,7 +7,7 @@ from app.schemas import SJSONDocCreate, SJSONDocUpdate
 
 
 class CRUDJSONDoc(CRUDBaseAuth[JSONDoc, SJSONDocCreate, SJSONDocUpdate]):
-    async def get_bydoctype(self, db: AsyncSession, user: int, *, doctype: str) -> List[JSONDoc]:
+    async def get_bydoctype(self, db: AsyncSession, user: int, *, doctype: str) -> list[JSONDoc]:
         """ Return users jsondoc filtered by doctype. """
         result = await db.execute(select(JSONDoc).filter(JSONDoc.doctype == doctype, JSONDoc.user == user))
         return result.scalars().all()

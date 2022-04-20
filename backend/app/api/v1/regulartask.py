@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -10,7 +10,7 @@ from app.api import deps, resp
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.SRegularTaskOut])
+@router.get("/", response_model=list[schemas.SRegularTaskOut])
 async def read_regulartask(
     skip: int = 0,
     limit: int = 1000,

@@ -1,4 +1,4 @@
-from typing import Any, List
+from typing import Any
 
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
@@ -10,7 +10,7 @@ from app.api import deps, resp
 router = APIRouter()
 
 
-@router.get("/", response_model=List[schemas.SUser])
+@router.get("/", response_model=list[schemas.SUser])
 async def read_users(
     skip: int = 0,
     limit: int = 100,
