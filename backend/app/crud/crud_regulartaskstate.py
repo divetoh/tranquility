@@ -6,12 +6,12 @@ from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import RegularTask, RegularTaskState
-from app.schemas.regulartaskstate import SRegularTaskStateCreate, SRegularTaskStateOut
+from app.schemas.regulartaskstate import SRegularTaskStateCreate
 from .crud_regulartask import regulartask as crud_regulartask
 
 
 class CRUDRegularTaskState():
-    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> list[SRegularTaskStateOut]:
+    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> list[RegularTaskState]:
         query = select(RegularTaskState).join(RegularTask).filter(
             RegularTask.user == user,
             RegularTaskState.statedate == statedate,
@@ -25,7 +25,7 @@ class CRUDRegularTaskState():
         *,
         start: date,
         end: date,
-    ) -> list[SRegularTaskStateOut]:
+    ) -> list[RegularTaskState]:
         """ Return all user's RegularTaskState for date in range. """
         query = select(RegularTaskState).join(RegularTask).filter(
             RegularTask.user == user,

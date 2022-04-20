@@ -6,8 +6,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import DailyTask, DailyTaskState
-from app.schemas.dailytaskstate import (SDailyTaskStateOut,
-                                        SDailyTaskStateUpdate)
+from app.schemas.dailytaskstate import SDailyTaskStateOut, SDailyTaskStateUpdate
 from .crud_dailytask import dailytask as crud_dailytask
 
 
@@ -20,7 +19,7 @@ class CRUDDailyTaskState():
         )
         return (await db.execute(query)).scalars().first()
 
-    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> list[SDailyTaskStateOut]:
+    async def get_multi(self, db: AsyncSession, user: int, *, statedate: date) -> list[DailyTaskState]:
         query = select(DailyTaskState).join(DailyTask).filter(
             DailyTask.user == user,
             DailyTaskState.statedate == statedate,
@@ -34,7 +33,7 @@ class CRUDDailyTaskState():
         *,
         start: date,
         end: date,
-    ) -> list[SDailyTaskStateOut]:
+    ) -> list[DailyTaskState]:
         """ Return all user's DailyTaskState for date in range. """
         query = select(DailyTaskState).join(DailyTask).filter(
             DailyTask.user == user,

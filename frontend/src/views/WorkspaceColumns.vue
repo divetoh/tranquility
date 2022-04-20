@@ -376,8 +376,4 @@ export default {
   overflow-y: auto;
   padding: 0px 2px 5px 2px;
 }
-
-.w400 {
-  width: 400px;
-}
 </style>

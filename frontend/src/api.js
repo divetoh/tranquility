@@ -66,4 +66,9 @@ export const api = {
       token,
     });
   },
+  async getArchiveJSON() {
+    var param = authHeaders();
+    param.responseType = "blob";
+    return axios.get(`${apiUrl}/api/v1/archive/full_json`, param);
+  },
 };

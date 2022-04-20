@@ -1,5 +1,6 @@
 from fastapi import APIRouter
 
+from . import archive
 from . import dailytask
 from . import dailytaskstate
 from . import daystate
@@ -23,3 +24,5 @@ api_router.include_router(dailytask.router, prefix="/dailytask", tags=["dailytas
 api_router.include_router(daystate.router, prefix="/daystate", tags=["states"])
 api_router.include_router(regulartaskstate.router, prefix="/regulartaskstate", tags=["states"])
 api_router.include_router(dailytaskstate.router, prefix="/dailytaskstate", tags=["states"])
+
+api_router.include_router(archive.router, prefix="/archive", tags=["tools"])

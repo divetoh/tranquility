@@ -12,6 +12,10 @@ class Base:
     def __tablename__(cls) -> str:      # noqa
         return cls.__name__.lower()
 
+    def as_dict(self, exclude=None):
+        exclude = [] if exclude is None else exclude
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns if c.name not in exclude}
+
 
 # Mixins used in Generic CRUD classes
 
