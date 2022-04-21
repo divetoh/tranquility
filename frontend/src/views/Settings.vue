@@ -3,7 +3,7 @@
     <div class="">
       <q-tabs v-model="tab" no-caps dense align="left" narrow-indicator class="bg-topbar text-white">
         <q-route-tab name="personal" label="Settings" to="/settings/personal" />
-        <q-route-tab name="users" label="Users" to="/settings/users" />
+        <q-route-tab name="users" label="Users" to="/settings/users" v-if="isSuperUser" />
       </q-tabs>
     </div>
     <div v-if="tab == 'personal'">
@@ -30,7 +30,9 @@ export default {
   },
   created: async function () {},
   methods: {},
-  computed: mapState({}),
+  computed: mapState({
+    isSuperUser: (state) => state.auth.userProfile.is_superuser,
+  }),
 
   setup() {
     return {
