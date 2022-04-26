@@ -1,6 +1,8 @@
 # Tranquility
 Web-based Personal Information Manager (PIM). Early development stage.
 
+[Demo](https://demo.divetoh.ru/)
+
 ![Screen](/doc/img/screen.jpg)
 
 Tranquility based on:

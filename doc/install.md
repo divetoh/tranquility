@@ -11,8 +11,12 @@ Settings in .env file:
 * FIRST_SUPERUSER - first user email
 * FIRST_SUPERUSER_PASSWORD - first user password
 * VUE_APP_DOMAIN - backend URL
+* DEMO_USERS - Maximum number of users for demo-mode (if zero - demo mode is disabled)
+* VUE_APP_DEMOMODE - Is demo sign-in enabled?
 
 VUE_APP_DOMAIN and BACKEND_CORS_ORIGINS are used only if frontend and backend are running on different IP addresses or ports. Otherwise keep empty values.
+
+VUE_APP_DEMOMODE and DEMO_USERS are used for demo access, in normal mode both variables should be zero.
 
 ## Run in Docker
 
