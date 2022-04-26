@@ -1,0 +1,1 @@
+*/5 * * * *  cd /src && /usr/local/bin/python3 tool.delete_demo_users.py

@@ -1,5 +1,5 @@
 from .dailytask import SDailyTaskCreate, SDailyTaskOut, SDailyTaskUpdate
-from .dailytaskstate import SDailyTaskStateOut, SDailyTaskStateUpdate
+from .dailytaskstate import SDailyTaskStateCreate, SDailyTaskStateOut, SDailyTaskStateUpdate
 from .daystate import SDayStateCreate, SDayStateOut, SDayStateUpdate
 from .jsondoc import SJSONDocCreate, SJSONDocOut, SJSONDocUpdate
 from .markdown import SMarkdownCreate, SMarkdownOut, SMarkdownUpdate

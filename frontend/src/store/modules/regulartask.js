@@ -16,7 +16,7 @@ export default {
       }
     },
     async aRegulartaskDone({ state, commit, rootState, dispatch }, uid) {
-      if (state.lst.length == 0) await dispatch("aRegulartasksLoad");
+      if (state.lst == null) await dispatch("aRegulartasksLoad");
       if (rootState.current.date == undefined) return;
       await dispatch("aRegulartaskstateAdd", { statedate: rootState.current.date, taskstate: 1, regulartask: uid });
       var nextdate = new Date();

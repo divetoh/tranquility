@@ -6,7 +6,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import DailyTask, DailyTaskState
-from app.schemas.dailytaskstate import SDailyTaskStateOut, SDailyTaskStateUpdate
+from app.schemas.dailytaskstate import SDailyTaskStateCreate, SDailyTaskStateUpdate
 from .crud_dailytask import dailytask as crud_dailytask
 
 
@@ -42,7 +42,7 @@ class CRUDDailyTaskState():
         )
         return (await db.execute(query)).scalars().all()
 
-    async def create(self, db: AsyncSession, user: int, *, obj_in: SDailyTaskStateOut) -> DailyTaskState:
+    async def create(self, db: AsyncSession, user: int, *, obj_in: SDailyTaskStateCreate) -> DailyTaskState:
         await crud_dailytask.check_access(db, user, uid=obj_in.dailytask)
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = DailyTaskState(**obj_in_data)

@@ -1,0 +1,34 @@
+{
+    "coretasklist": 1,
+    "coreactivity": 2,
+    "dailytask": [],
+    "dailytaskstate": [],
+    "daystate": [],
+    "jsondoc": [
+        {
+            "uid": 1,
+            "doctype": "tasklist",
+            "name": "Core Tasklist",
+            "jsondoc": "[]"
+        }, {
+            "uid": 2,
+            "doctype": "activity",
+            "name": "CoreActivity",
+            "jsondoc": "{\"workspaces\":[3]}"
+        }, {
+            "uid": 3,
+            "doctype": "workspace",
+            "name": "Wellcome",
+            "jsondoc": "{\"type\":\"column\",\"content\":[{\"name\":\"Column\",\"content\":[{\"type\":\"markdown\",\"uid\":1}]}]}"
+        }
+    ],
+    "markdown": [
+        {
+            "uid": 1,
+            "name": "Workspace block",
+            "md": "# Wellcome to Tranquility\n\n[github](https://github.com/divetoh/tranquility)"
+        }
+    ],
+    "regulartask": [],
+    "regulartaskstate": []
+}

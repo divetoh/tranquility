@@ -1,6 +1,8 @@
+from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, Column, Integer, String
+from sqlalchemy import Boolean, Column, DateTime, Integer, String
+from sqlalchemy.sql import func
 from app.db.base_class import Base, MixinUID
 
 
@@ -13,3 +15,4 @@ class User(Base, MixinUID):
     is_superuser: bool = Column(Boolean(), default=False, nullable=False)
     coreactivity: Optional[int] = Column(Integer, nullable=True)
     coretasklist: Optional[int] = Column(Integer, nullable=True)
+    created_dt: datetime = Column(DateTime(), server_default=func.now(), nullable=False)

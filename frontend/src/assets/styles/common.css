@@ -1,3 +1,7 @@
 .w400 {
   width: 400px;
 }
+
+.mh300 {
+  min-height: 300px;
+}

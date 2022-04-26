@@ -108,3 +108,21 @@ async def update_user(
                 detail="The user with this email already exists in the system.",
             )
     return await crud.user.update(_db, uid=user_id, obj_in=user_in)
+
+
+@router.delete("/{user_id}", response_model=schemas.SBoolOut, responses=resp.C34)
+async def delete_user(
+    *,
+    user_id: int,
+    db: AsyncSession = Depends(deps.get_db),
+    current_user: models.User = Depends(deps.get_current_active_superuser),
+) -> Any:
+    """
+    Delete RegularTaskState.
+    """
+    await crud.user.remove(
+        db,
+        uid=user_id,
+        r404=True,
+    )
+    return schemas.SBoolOut(state=True)

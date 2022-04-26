@@ -56,5 +56,5 @@ async def read_dailytask(
         "regulartaskstate": [i.as_dict(exclude=["user"]) for i in regulartaskstate],
     }
 
-    archive_bytes = json.dumps(archive, default=str).encode('utf-8')
+    archive_bytes = json.dumps(archive, default=str, ensure_ascii=False).encode('utf-8')
     return Response(content=archive_bytes, media_type="application/json")

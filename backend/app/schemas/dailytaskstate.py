@@ -15,3 +15,10 @@ class SDailyTaskStateOut(BaseModel):
 class SDailyTaskStateUpdate(BaseModel):
     """ DailyTaskState Request for update """
     state: int = 0
+
+
+class SDailyTaskStateCreate(BaseModel):
+    """ DailyTaskState Create """
+    statedate: date
+    dailytask: int
+    state: int

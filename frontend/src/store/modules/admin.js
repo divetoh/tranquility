@@ -17,6 +17,12 @@ export default {
         commit("adminCreateUser", response.data);
       }
     },
+    async aAdminDeleteUser({ commit }, { uid }) {
+      const response = await api.user.delete(uid);
+      if (response.data) {
+        commit("adminDeleteUser", { uid });
+      }
+    },
     async aAdminUpdateUser({ state, commit, dispatch, rootState }, { uid, data }) {
       await api.user.update(uid, data);
       for (var index in state.users)
@@ -38,6 +44,13 @@ export default {
       for (var i in data) {
         if (i == "password") continue;
         state.users[index][i] = data[i];
+      }
+    },
+    adminDeleteUser(state, { uid }) {
+      for (var i in state.users) {
+        if (state.users[i].uid != uid) continue;
+        state.users.splice(i, 1);
+        break;
       }
     },
   },

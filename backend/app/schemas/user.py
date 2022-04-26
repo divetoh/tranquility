@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel, EmailStr
@@ -30,6 +31,7 @@ class SUser(BaseModel):
     is_active: bool
     is_superuser: bool
     full_name: str
+    created_dt: datetime
     coreactivity: Optional[int]
     coretasklist: Optional[int]
 

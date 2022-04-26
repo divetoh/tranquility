@@ -1,14 +1,15 @@
+from datetime import datetime, timedelta
 from typing import Any, Optional, Union
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
 from app.crud.base import CRUDBase
+from app.db.importdata import import_data
 from app.models.user import User
-from app.schemas.jsondoc import SJSONDocCreate
 from app.schemas.user import SUserCreate, SUserUpdate
-from .crud_jsondoc import jsondoc
 
 
 class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
@@ -23,7 +24,17 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         result = await db.execute(select(func.count(User.uid)))
         return result.scalar_one()
 
-    async def create(self, db: AsyncSession, *, obj_in: SUserCreate) -> User:
+    async def get_demo_users(self, db: AsyncSession) -> list[User]:
+        if settings.DEMO_USERS == 0:
+            return []
+        result = await db.execute(select(User).filter(
+            User.is_superuser == 0,
+            User.email.like("%test.test"),
+            User.created_dt < datetime.now() - timedelta(minutes=settings.DEMO_ACCESS_TOKEN_EXPIRE_MINUTES),
+        ))
+        return result.scalars().all()
+
+    async def create(self, db: AsyncSession, *, obj_in: SUserCreate, data_source: str = "init.json") -> User:
         """
         Create new user.
         """
@@ -39,17 +50,8 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         db.add(db_obj)
         await db.commit()
         await db.refresh(db_obj)
-        # Generating empty activity and tasklist and assign they to user
-        obj_tl = SJSONDocCreate(doctype="tasklist", name="Core Tasklist", jsondoc="[]")
-        tasklist = await jsondoc.create(db=db, user=db_obj.uid, obj_in=obj_tl)
-        obj_act = SJSONDocCreate(
-            doctype="activity",
-            name="Core Activity",
-            jsondoc='{"name":"coreactivity","workspaces":[]}',
-        )
-        activity = await jsondoc.create(db=db, obj_in=obj_act, user=db_obj.uid)
-        obj_upd = {"coreactivity": activity.uid, "coretasklist": tasklist.uid}
-        return await self.update_byobj(db=db, db_obj=db_obj, obj_in=obj_upd)
+        # Generate starter content
+        return await import_data(db, db_obj, data_source)
 
     async def update_byobj(self, db: AsyncSession, db_obj: User, *, obj_in: Union[SUserUpdate, dict[str, Any]]) -> User:
         """

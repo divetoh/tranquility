@@ -1,7 +1,7 @@
 <template>
   <div class="q-pa-md q-pr-lg row items-start q-gutter-md">
-    <q-card bordered class="col-6 q-pa-md">
-      <q-btn class="q-mb-sm" no-caps size="sm" @click="create_user" color="primary" icon="person_add">
+    <q-card bordered class="col-12 q-pa-md">
+      <q-btn class="q-mb-sm" no-caps size="sm" @click="createUser" color="primary" icon="person_add">
         &nbsp;Create user
       </q-btn>
       <div>
@@ -14,20 +14,23 @@
               <th>Email</th>
               <th>Active?</th>
               <th>Administrator?</th>
+              <th>Created</th>
             </tr>
           </thead>
           <tbody>
             <template v-for="(u, index) in users" :key="u.uid">
               <tr>
                 <td>
-                  <q-btn flat dense size="sm" @click="edit_user(index)" icon="edit" />
-                  <q-btn flat dense size="sm" @click="set_password(index)" icon="password" />
+                  <q-btn flat dense size="sm" @click="editUser(index)" icon="edit" />
+                  <q-btn flat dense size="sm" @click="setPassword(index)" icon="password" />
+                  <q-btn flat dense size="sm" @click="deleteUser(index)" icon="delete" v-if="u.uid != self_uid" />
                 </td>
                 <td>{{ u.uid }}</td>
                 <td>{{ u.full_name }}</td>
                 <td>{{ u.email }}</td>
                 <td>{{ u.is_active }}</td>
                 <td>{{ u.is_superuser }}</td>
+                <td>{{ u.created_dt.substring(0, 10) }}</td>
               </tr>
             </template>
           </tbody>
@@ -52,12 +55,12 @@ export default {
     await this.$store.dispatch("aAdminLoadUsers");
   },
   methods: {
-    create_user: function () {
+    createUser: function () {
       Dialog.create({
         component: DEditUser,
       });
     },
-    edit_user: function (index) {
+    editUser: function (index) {
       Dialog.create({
         component: DEditUser,
         componentProps: {
@@ -65,7 +68,18 @@ export default {
         },
       });
     },
-    set_password: async function (index) {
+    deleteUser: function (index) {
+      Dialog.create({
+        dark: true,
+        title: "Confirm delete",
+        message: `Would you like to delete daily task: ${this.users[index].email}?`,
+        cancel: true,
+        persistent: true,
+      }).onOk(() => {
+        this.$store.dispatch("aAdminDeleteUser", { uid: this.users[index].uid });
+      });
+    },
+    setPassword: async function (index) {
       const name = this.$store.state.admin.users[index].full_name;
       const uid = this.$store.state.admin.users[index].uid;
       Dialog.create({
@@ -85,6 +99,7 @@ export default {
   },
   computed: mapState({
     users: (state) => state.admin.users,
+    self_uid: (state) => state.auth.userProfile.uid,
   }),
 };
 </script>

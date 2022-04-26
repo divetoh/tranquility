@@ -27,7 +27,7 @@ async def read_dailytaskstate(
     dailytasks = await crud.dailytask.get_multi(_db, _user.uid, skip=0, limit=1000)
     for dt in dailytasks:
         if dt.is_active:
-            dts = schemas.SDailyTaskStateOut(statedate=statedate, dailytask=dt.uid, state=0)
+            dts = schemas.SDailyTaskStateCreate(statedate=statedate, dailytask=dt.uid, state=0)
             result.append(await crud.dailytaskstate.create(_db, _user.uid, obj_in=dts))
     return result
 

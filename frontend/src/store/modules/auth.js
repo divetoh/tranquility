@@ -52,8 +52,11 @@ export default {
     },
     async aLogIn({ commit, dispatch, state }, payload) {
       //try {
-      const response = await api.logInGetToken(payload.username, payload.password);
-      const token = response.data.access_token;
+      var token = payload.token;
+      if (token == undefined) {
+        const response = await api.logInGetToken(payload.username, payload.password);
+        token = response.data.access_token;
+      }
       if (token) {
         saveLocalToken(token);
         commit("setToken", token);

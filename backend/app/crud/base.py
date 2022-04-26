@@ -257,12 +257,13 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         """
         query = await db.execute(select(self.model.user).filter(self.model.uid == uid))
         result = query.scalars().first()
-        if not result:
-            if result != user:
-                raise HTTPException(status_code=403, detail="Access denied.")
-            query = await db.execute(delete(self.model).where(self.model.uid == uid, self.model.user == user))
-            await db.commit()
-            result = query.rowcount     # type: ignore
-        if r404 and not result:
+        if not result and r404:
             raise HTTPException(status_code=404, detail="Object not found.")
+        elif not result:
+            return 0
+        elif result != user:
+            raise HTTPException(status_code=403, detail="Access denied.")
+        query = await db.execute(delete(self.model).where(self.model.uid == uid, self.model.user == user))
+        await db.commit()
+        result = query.rowcount     # type: ignore
         return int(result)

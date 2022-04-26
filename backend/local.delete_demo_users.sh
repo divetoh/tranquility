@@ -1,7 +1,6 @@
 #
-# Upgrade DB to last revision
+# Start uvicorn server
 #
-
 set -a
 source ../.env.local
 set +a
@@ -9,8 +8,6 @@ set +a
 if [ -f "./.venv/bin/activate" ]; then
     echo "Activate venv."
     source ./.venv/bin/activate
-else
-    echo "No venv found, use system python installation."
 fi
 
-alembic upgrade head
+python3 ./tool.delete_demo_users.py

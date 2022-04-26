@@ -21,6 +21,9 @@ services:
   frontend:
     build:
       context: ./frontend
+      args:
+        VUE_APP_DOMAIN: ${VUE_APP_DOMAIN}
+        VUE_APP_DEMOMODE: ${VUE_APP_DEMOMODE}
     env_file:
       - .env
     ports:

@@ -57,8 +57,10 @@ export const api = {
     const params = new URLSearchParams();
     params.append("username", username);
     params.append("password", password);
-
     return axios.post(`${apiUrl}/api/v1/login/access-token`, params);
+  },
+  async createDemoAccount() {
+    return axios.post(`${apiUrl}/api/v1/login/demo-token`);
   },
   async resetPassword(password, token) {
     return axios.post(`${apiUrl}/api/v1/reset-password/`, {
