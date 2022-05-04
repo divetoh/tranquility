@@ -8,6 +8,7 @@
     ref="wrapperRef"
   >
     <BlockMarkdown v-if="block.type == 'markdown'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
+    <TaskList v-if="block.type == 'tasklist'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
     <TaskList v-if="block.type == 'coretasklist'" :actions="actions" @delBlock="delBlock" />
   </div>
 </template>
@@ -35,6 +36,7 @@ export default {
       this.vars.handled = event.target.classList.contains("drag_handler");
     },
     dragStart: function (event) {
+      if (this.$dragState.objectType != "") return;
       if (this.vars.handled) {
         this.$dragState.objectType = "WSBlock";
         this.$dragState.object = {

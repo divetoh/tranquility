@@ -54,7 +54,8 @@
           </template>
           <!-- Column footer button block -->
           <q-btn-group rounded class="bg-white">
-            <q-btn icon="article" size="sm" v-on:click="createBlockMarkdown(index)" />
+            <q-btn icon="subject" size="sm" v-on:click="createBlockMarkdown(index)" />
+            <q-btn icon="format_list_bulleted" size="sm" v-on:click="createBlockTasklist(index)" />
             <q-btn icon="more_horiz" size="sm" v-on:click="createBlockDialog(index)" />
           </q-btn-group>
         </div>
@@ -197,22 +198,26 @@ export default {
       }
       event.preventDefault();
     },
-    dragenter: function () {
+    dragenter: function (event) {
       // Dragging enter workspace area. Initialize drag'n'drop state if object acceptable.
       if (this.$dragState.objectType != "WSColumn" && this.$dragState.objectType != "WSBlock") return;
       this.vars.dropenter_level += 1;
-      if (this.vars.dropenter_level != 1) return;
-      // If dragging just started - calculate dropzones grid
-      this.$_calcDragGrid();
+      if (this.vars.dropenter_level == 1) {
+        // If dragging just started - calculate dropzones grid
+        this.$_calcDragGrid();
+      }
+      event.preventDefault();
     },
-    dragleave: function () {
+    dragleave: function (event) {
       // Dragging leave workspace area
       if (this.$dragState.objectType != "WSColumn" && this.$dragState.objectType != "WSBlock") return;
       this.vars.dropenter_level -= 1;
-      if (this.vars.dropenter_level > 0) return;
-      // Cursor moved out from component or drag ending.
-      this.$_cleanDropstate();
-    },
+      if (this.vars.dropenter_level == 0) {
+        // Cursor moved out from component or drag ending.
+        this.$_cleanDropstate();
+      }
+      event.preventDefault();
+     },
     scroll: function () {
       // Recalculate dropzones grid if workspace scrolled
       if (this.vars.dropenter_level > 0) this.$_calcDragGrid();
@@ -277,6 +282,16 @@ export default {
         workspace: this.uid,
         column,
         markdown,
+      });
+    },
+    createBlockTasklist: async function (column) {
+      var tasklist = await this.$store.dispatch("aTasklistCreate", {
+        name: "Workspace tasklist",
+      });
+      await this.$store.dispatch("aWorkspaceColumnAppendTasklist", {
+        workspace: this.uid,
+        column,
+        tasklist,
       });
     },
     createBlockDialog: async function (column) {

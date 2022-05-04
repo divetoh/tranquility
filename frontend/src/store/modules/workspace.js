@@ -56,8 +56,11 @@ export default {
         return data.uid;
       }
     },
+    async aWorkspaceColumnAppendTasklist({ commit, dispatch }, payload) {
+      commit("workspaceColumnAppendTasklist", payload);
+      await dispatch("aWorkspaceSave", payload.workspace);
+    },
     async aWorkspaceColumnAppendMarkdown({ commit, dispatch }, payload) {
-      // TODO: Check if workspace loaded
       commit("workspaceColumnAppendMarkdown", payload);
       await dispatch("aWorkspaceSave", payload.workspace);
     },
@@ -113,6 +116,12 @@ export default {
       state.workspace_lst[payload.workspace].workspace.content[payload.column].content.push({
         type: "markdown",
         uid: payload.markdown,
+      });
+    },
+    workspaceColumnAppendTasklist(state, payload) {
+      state.workspace_lst[payload.workspace].workspace.content[payload.column].content.push({
+        type: "tasklist",
+        uid: payload.tasklist,
       });
     },
     workspaceColumnAppendBlock(state, payload) {

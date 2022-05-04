@@ -18,6 +18,24 @@ export default {
         //await dispatch("aCheckApiError", error);
       }
     },
+    async aTasklistCreate({ commit }, { name }) {
+      const response = await api.jsondoc.create({
+        doctype: "tasklist",
+        name: name,
+        jsondoc: JSON.stringify([]),
+      });
+      if (response.data) {
+        var payload = response.data;
+        payload.saved = true;
+        commit("tasklistSet", payload);
+        return payload.uid;
+      }
+      return false;
+    },
+    async aTasklistDelete({ commit }, { uid }) {
+      const response = await api.jsondoc.delete(uid);
+      if (response.data.state) commit("tasklistDelete", uid);
+    },
     aTasklistAddRows({ commit, dispatch }, { uid, count }) {
       commit("tasklistAddRows", { uid, count });
       dispatch("aTasklistSaveDebounce", uid);
@@ -29,8 +47,11 @@ export default {
       });
       commit("tasklistSetSaved", { uid, saved: true });
     },
-    aTasklistSaveDebounce: debounce(({ dispatch }, uid) => {
-      // TODO: Check that save executes fo all uid argument
+    async aTasklistSaveDebounce({ dispatch }, uid) {
+      dispatch("aTasklistSave", uid);
+    },
+    aTasklistSaveDebounce_2fix: debounce(({ dispatch }, uid) => {
+      // TODO: Don't work for different uid
       dispatch("aTasklistSave", uid);
     }, 2000),
     async aTaskListDelItem({ commit, dispatch }, payload) {
@@ -61,6 +82,13 @@ export default {
         }
       }
     },
+    async aTasklistItemMove({ state, dispatch, commit }, { from_uid, from_row, to_uid, to_row }) {
+      if (state.lst[from_uid] == undefined) await dispatch("aTasklistLoad", from_uid);
+      if (state.lst[to_uid] == undefined) await dispatch("aTasklistLoad", to_uid);
+      commit("tasklistItemMove", { from_uid, from_row, to_uid, to_row });
+      dispatch("aTasklistSaveDebounce", from_uid);
+      if (to_uid != from_uid) dispatch("aTasklistSaveDebounce", to_uid);
+    },
   },
   mutations: {
     tasklistSet(state, payload) {
@@ -71,6 +99,9 @@ export default {
         saved: payload.saved,
         jsondoc: JSON.parse(payload.jsondoc),
       };
+    },
+    tasklistDelete(state, { uid }) {
+      delete state.lst[uid];
     },
     tasklistSetSaved(state, payload) {
       state.lst[payload.uid].saved = payload.saved;
@@ -90,6 +121,14 @@ export default {
     tasklistSetItemText(state, { uid, index, text }) {
       state.lst[uid].jsondoc[index].text = text;
       state.lst[uid].saved = false;
+    },
+    tasklistItemMove(state, { from_uid, from_row, to_uid, to_row }) {
+      const block = state.lst[from_uid].jsondoc[from_row];
+      state.lst[to_uid].jsondoc.splice(to_row, 0, block);
+      if (to_uid == from_uid && to_row <= from_row) from_row += 1;
+      state.lst[from_uid].jsondoc.splice(from_row, 1);
+      state.lst[from_uid].saved = false;
+      state.lst[to_uid].saved = false;
     },
   },
 };

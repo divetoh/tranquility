@@ -54,11 +54,11 @@ export default {
       this.$q
         .dialog({
           title: "Confirm",
+          dark: true,
           message: "Would you like to delete block?",
           options: {
             type: "checkbox",
             model: [],
-            // inline: true
             items: [{ label: "Delete markdown content.", value: "delmd" }],
           },
           cancel: true,

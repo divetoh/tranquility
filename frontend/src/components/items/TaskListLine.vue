@@ -1,8 +1,9 @@
 <template>
-  <q-item clickable dense class="q-gutter-xs">
+  <q-item clickable dense class="q-pl-none q-py-xs">
     <q-item-section side>
-      <div class="q-gutter-xs">
-        <q-btn color="blue" flat dense round v-on:click="done" icon="done" size="sm">
+      <div class="">
+        <q-icon class="tldrag_handler q-pl-none" size="xs" flat dense name="drag_indicator" style="cursor: move" />
+        <q-btn color="blue" flat dense round v-on:click="done" icon="done" size="sm" v-if="is_coretasklist">
           <q-tooltip :delay="550" anchor="top middle" self="center middle">Complete task</q-tooltip>
         </q-btn>
         <q-btn color="blue" flat dense round v-on:click="deleteTask" icon="delete" size="sm">
@@ -10,7 +11,7 @@
         </q-btn>
       </div>
     </q-item-section>
-    <q-item-section>
+    <q-item-section style="user-select: text">
       {{ tasklistlinetext }}
       <q-popup-edit buttons lazy-rule v-slot="scope" v-if="tasklistline.noedit != true" v-model="tasklistlinetext">
         <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
@@ -24,7 +25,7 @@ import { mapState } from "vuex";
 
 export default {
   name: "TaskListLine",
-  props: ["uid", "index"],
+  props: ["uid", "index", "is_coretasklist"],
   components: {},
   methods: {
     done: async function () {
