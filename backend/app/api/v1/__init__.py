@@ -1,16 +1,7 @@
 from fastapi import APIRouter
 
-from . import archive
-from . import dailytask
-from . import dailytaskstate
-from . import daystate
-from . import jsondoc
-from . import login
-from . import markdown
-from . import regulartask
-from . import regulartaskstate
-from . import users
-
+from . import (archive, dailytask, dailytaskstate, daystate, jsondoc, login,
+               markdown, memorize, regulartask, regulartaskstate, users)
 
 api_router = APIRouter()
 api_router.include_router(login.router, tags=["login"])
@@ -26,3 +17,7 @@ api_router.include_router(regulartaskstate.router, prefix="/regulartaskstate", t
 api_router.include_router(dailytaskstate.router, prefix="/dailytaskstate", tags=["states"])
 
 api_router.include_router(archive.router, prefix="/archive", tags=["tools"])
+
+api_router.include_router(memorize.stack.router, prefix="/memorize/stack", tags=["memorize"])
+api_router.include_router(memorize.category.router, prefix="/memorize/category", tags=["memorize"])
+api_router.include_router(memorize.card.router, prefix="/memorize/card", tags=["memorize"])

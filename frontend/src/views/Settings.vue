@@ -22,7 +22,7 @@ import SettingsPersonal from "@/views/SettingsPersonal";
 import SettingsUsers from "@/views/SettingsUsers";
 
 export default {
-  name: "Planing",
+  name: "Settings",
 
   components: {
     SettingsUsers,

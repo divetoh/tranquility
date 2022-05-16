@@ -21,7 +21,19 @@
       <q-item-section avatar>
         <q-icon name="assignment"></q-icon>
       </q-item-section>
-      <q-item-section color="white" class="text-left">Planing</q-item-section>
+      <q-item-section color="white" class="text-left">Planning</q-item-section>
+    </q-item>
+
+    <q-item
+      clickable
+      :active="this.$route.name == 'memorize'"
+      @click="this.$router.push('/memorize/learn')"
+      active-class="act-menu-link"
+    >
+      <q-item-section avatar>
+        <q-icon name="sd_card"></q-icon>
+      </q-item-section>
+      <q-item-section color="white" class="text-left">Memorize</q-item-section>
     </q-item>
   </q-list>
 </template>

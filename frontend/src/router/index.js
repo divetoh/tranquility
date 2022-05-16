@@ -29,6 +29,11 @@ const routes = [
         name: "settings",
         component: () => import("../views/Settings.vue"),
       },
+      {
+        path: "memorize/:s_section",
+        name: "memorize",
+        component: () => import("../views/memorize/Memorize.vue"),
+      },
     ],
   },
 ];

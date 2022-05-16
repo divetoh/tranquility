@@ -6,3 +6,4 @@ from .crud_markdown import markdown
 from .crud_regulartask import regulartask
 from .crud_regulartaskstate import regulartaskstate
 from .crud_user import user
+from .memorize import memorizecard, memorizecategory, memorizestack

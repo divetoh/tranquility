@@ -5,3 +5,7 @@
 .mh300 {
   min-height: 300px;
 }
+
+.pointer{
+  cursor: pointer;
+}

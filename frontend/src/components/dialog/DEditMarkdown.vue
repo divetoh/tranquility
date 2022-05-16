@@ -7,7 +7,7 @@
       </q-card-section>
       <q-separator />
       <q-card-actions align="right" class="bg-white text-teal">
-        <q-btn icon="info" color="primary" no-caps label="Markdown syntax" @click="show_md_help" />
+        <q-btn icon="info" color="primary" no-caps label="Markdown syntax" @click="showMarkdownSyntax" />
         <q-space />
         <q-btn color="primary" label="OK" @click="onOKClick" />
       </q-card-actions>
@@ -59,7 +59,7 @@ export default {
         uid: this.uid,
       }).auth;
     },
-    show_md_help() {
+    showMarkdownSyntax() {
       Dialog.create({
         component: DHelpMarkdown,
       });

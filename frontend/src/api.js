@@ -52,6 +52,9 @@ export const api = {
   daystate: new APIBase("daystate"),
   regulartaskstate: new APIBase("regulartaskstate"),
   dailytaskstate: new APIBase("dailytaskstate"),
+  memorize_card: new APIBase("memorize/card"),
+  memorize_stack: new APIBase("memorize/stack"),
+  memorize_category: new APIBase("memorize/category"),
 
   async logInGetToken(username, password) {
     const params = new URLSearchParams();
