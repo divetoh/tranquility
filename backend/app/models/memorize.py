@@ -35,7 +35,7 @@ class MemorizeCategory(Base, MixinUser):
 class MemorizeCard(Base, MixinUID):
     uid: int = Column(Integer, primary_key=True, index=True)
     stack: int = Column(Integer, ForeignKey("memorizestack.uid", ondelete="CASCADE"), nullable=False, index=True)
-    category: int = Column(Integer, ForeignKey("memorizecategory.uid"), nullable=True, index=True)
+    category: int = Column(Integer, ForeignKey("memorizecategory.uid", ondelete='SET NULL'), nullable=True, index=True)
     is_active: bool = Column(Boolean(), default=True, nullable=False)
     name: str = Column(String(100), nullable=False)
     obverse: str = Column(String(1024), nullable=False)
