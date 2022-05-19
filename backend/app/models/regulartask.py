@@ -16,9 +16,9 @@ class RegularTask(Base, MixinUser):
     nextdate: date = Column(Date(), server_default=func.now())
     period: int = Column(Integer, nullable=False, default=1)
 
-    regulartaskstates: Any = relationship(
+    regulartaskstate_r: Any = relationship(
         "RegularTaskState",
-        backref="regulartask_r",
+        back_populates="regulartask_r",
         cascade="all, delete, delete-orphan",
         passive_deletes=True,
     )

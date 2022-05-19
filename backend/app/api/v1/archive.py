@@ -42,6 +42,10 @@ async def read_dailytask(
         end=date(3080, 1, 1),
     )
 
+    memorizestack = await crud.memorizestack.get_multi(_db, _user.uid)
+    memorizecategory = await crud.memorizecategory.get_multi(_db, _user.uid)
+    memorizecard = await crud.memorizecard.get_multi(_db, _user.uid)
+
     archive = {
         "full_name": _user.full_name,
         "email": _user.email,
@@ -54,6 +58,9 @@ async def read_dailytask(
         "markdown": [i.as_dict(exclude=["user"]) for i in markdown],
         "regulartask": [i.as_dict(exclude=["user"]) for i in regulartask],
         "regulartaskstate": [i.as_dict(exclude=["user"]) for i in regulartaskstate],
+        "memorizestack": [i.as_dict(exclude=["user"]) for i in memorizestack],
+        "memorizecategory": [i.as_dict(exclude=["user"]) for i in memorizecategory],
+        "memorizecard": [i.as_dict(exclude=["user"]) for i in memorizecard],
     }
 
     archive_bytes = json.dumps(archive, default=str, ensure_ascii=False).encode('utf-8')

@@ -12,9 +12,9 @@ class DailyTask(Base, MixinUser):
     is_active: bool = Column(Boolean(), nullable=False, default=True)
     name: str = Column(String(400), nullable=False)
 
-    dailytaskstates: Any = relationship(
+    dailytaskstate_r: Any = relationship(
         "DailyTaskState",
-        backref="dailytask_r",
+        back_populates="dailytask_r",
         cascade="all, delete, delete-orphan",
         passive_deletes=True,
     )

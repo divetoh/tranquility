@@ -43,8 +43,4 @@ class MemorizeCard(Base, MixinUID):
     hint: str = Column(String(1024), nullable=True)
 
     category_r: Any = relationship("MemorizeCategory", back_populates="card_r")
-    stack_r: Any = relationship(
-        "MemorizeStack",
-        back_populates="card_r",
-        passive_deletes=True,
-    )
+    stack_r: Any = relationship("MemorizeStack", back_populates="card_r")
