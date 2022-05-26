@@ -17,6 +17,7 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import delete, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db.base_class import MixinUID, MixinUser
@@ -106,9 +107,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        try:
+            db.add(db_obj)
+            await db.commit()
+            await db.refresh(db_obj)
+        except IntegrityError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=409,
+                detail="Non uniq parameter.",
+            ) from None
         return db_obj
 
     async def remove(self, db: AsyncSession, *, uid: int, r404: bool = False) -> int:
@@ -234,9 +242,16 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         for field in obj_data:
             if field in update_data:
                 setattr(db_obj, field, update_data[field])
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        try:
+            db.add(db_obj)
+            await db.commit()
+            await db.refresh(db_obj)
+        except IntegrityError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=409,
+                detail="Non uniq parameter.",
+            ) from None
         return db_obj
 
     async def remove(

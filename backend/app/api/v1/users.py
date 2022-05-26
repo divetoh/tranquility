@@ -71,7 +71,7 @@ def read_user_me(
     return _user
 
 
-@router.get("/{user_id}", response_model=schemas.SUser, responses=resp.C3)
+@router.get("/{user_id}", response_model=schemas.SUser, responses=resp.C34)
 async def read_user_by_id(
     user_id: int,
     _db: AsyncSession = Depends(deps.get_db),
@@ -87,7 +87,7 @@ async def read_user_by_id(
             status_code=403,
             detail="The user doesn't have enough privileges",
         )
-    return await crud.user.get(_db, uid=user_id)
+    return await crud.user.get(_db, uid=user_id, r404=True)
 
 
 @router.put("/{user_id}", response_model=schemas.SUser, responses=resp.C34 | resp.C9UID)

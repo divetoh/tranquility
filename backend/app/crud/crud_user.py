@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
 from typing import Any, Optional, Union
 
+from fastapi import HTTPException
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.config import settings
@@ -25,19 +27,24 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         return result.scalar_one()
 
     async def get_demo_users(self, db: AsyncSession) -> list[User]:
+        """
+        Get demo users with expired time
+        """
         if settings.DEMO_USERS == 0:
             return []
         result = await db.execute(select(User).filter(
             User.is_superuser == 0,
-            User.email.like("%test.test"),
+            User.email.like("%@test.test"),
             User.created_dt < datetime.now() - timedelta(minutes=settings.DEMO_ACCESS_TOKEN_EXPIRE_MINUTES),
         ))
         return result.scalars().all()
 
-    async def create(self, db: AsyncSession, *, obj_in: SUserCreate, data_source: str = "init.json") -> User:
+    async def create(self, db: AsyncSession, *, obj_in: SUserCreate, data_source: Optional[str] = "init.json") -> User:
         """
         Create new user.
         """
+        if data_source not in ["init.json", "demo.json"]:
+            data_source = "init.json"
         db_obj = User(
             email=obj_in.email,
             hashed_password=get_password_hash(obj_in.password),
@@ -47,10 +54,19 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
             coreactivity=None,
             coretasklist=None,
         )
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        try:
+            db.add(db_obj)
+            await db.commit()
+            await db.refresh(db_obj)
+        except IntegrityError:
+            await db.rollback()
+            raise HTTPException(
+                status_code=409,
+                detail="The user with this email already exists in the system.",
+            ) from None
         # Generate starter content
+        if data_source is None:
+            return db_obj
         return await import_data(db, db_obj, data_source)
 
     async def update_byobj(self, db: AsyncSession, db_obj: User, *, obj_in: Union[SUserUpdate, dict[str, Any]]) -> User:
