@@ -24,6 +24,9 @@ VUE_APP_DEMOMODE and DEMO_USERS are used for demo access, in normal mode both va
 2. Run: `docker-compose up`
 3. Open `http://[your_server_ip]:8080/` in browser. (login and password in .env file)
 
+To run tests in docker use:
+`docker-compose -f docker-compose-tests.yml up --abort-on-container-exit --exit-code-from backend`
+
 ## Installation without Docker
 
 Example for Debian/Ubuntu linux.

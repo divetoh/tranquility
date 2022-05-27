@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  db-tests:
+    image: mariadb:10.7
+    env_file:
+      - .env
+    environment:
+      - MYSQL_SERVER=db-tests
+    restart: always
+
+  backend:
+    build:
+      context: ./backend
+    env_file:
+      - .env
+    environment:
+      - MYSQL_SERVER=db-tests
+    command: bash -c "./docker.tests.sh"
+    depends_on:
+      - db-tests

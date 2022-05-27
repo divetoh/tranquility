@@ -8,3 +8,5 @@ python-jose
 passlib
 alembic
 gunicorn
+pytest
+httpx
