@@ -31,7 +31,7 @@
       </q-input>
     </q-card>
     <div class="q-pa-sm col row">
-      <div v-if="hide_tasklist != true" class="col-xs-10 col-sm-6 col-md-4 q-pa-sm">
+      <div v-if="hide_tasklist != true" class="col-xs-10 col-sm-6 col-md-4 q-pa-sm block_wrapper">
         <TaskList :actions="{ delblock: false }" />
       </div>
       <div class="col-xs-10 col-sm-6 col-md-4 q-pa-sm">

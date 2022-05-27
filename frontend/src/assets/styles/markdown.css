@@ -53,7 +53,7 @@ blockquote {
 ul, ol {
   margin-top: 8px;
   margin-bottom: 8px;
-  padding-left: 2em;
+  padding-left: 1.3em;
 }
 
 tt, code {
@@ -72,7 +72,7 @@ pre {
   padding: 8px;
   overflow: auto;
   line-height: 1.45;
-  background-color: #f6f8fa;
+  background-color: rgba(175,184,193,0.2); /*#f6f8fa;*/
   border-radius: 6px;
 }
 

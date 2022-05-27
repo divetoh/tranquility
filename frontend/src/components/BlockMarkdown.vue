@@ -9,11 +9,11 @@
         <q-tooltip :delay="550" anchor="top middle" self="center middle"> Delete block </q-tooltip>
       </q-btn>
     </q-bar>
-    <q-card-section class="text-left q-pa-sm" style="user-select: text">
+    <q-card-section class="text-left q-py-sm q-px-md" style="user-select: text">
       <q-card-section class="text-center" v-if="markdown === undefined">
         Loading... <q-spinner-rings color="grey" size="md" />
       </q-card-section>
-      <div v-html="markdown_fmt" v-else />
+      <div v-html="markdown_fmt" v-else @dblclick="edit" />
     </q-card-section>
   </q-card>
 </template>
