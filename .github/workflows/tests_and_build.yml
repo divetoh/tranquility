@@ -1,0 +1,46 @@
+name: Tests and Build
+on:
+  push:
+    branches: [main]
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run tests
+        run: docker-compose -f docker-compose-tests.yml up --abort-on-container-exit --exit-code-from backend
+
+  build:
+    needs: tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node 16
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Build frontend
+        working-directory: ./frontend
+        run: npm ci
+        run: VUE_APP_DEMOMODE=0 npm build
+        run: zip frontend.zip ./dist/* -r
+
+      - name: Build frontend with demo-mode login
+        working-directory: ./frontend
+        run: VUE_APP_DEMOMODE=1 npm build
+        run: zip frontend_demo.zip ./dist/* -r
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: region=ru-central1
+
+      - name: Copy build to cloud storage
+        working-directory: ./frontend
+        run: aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend.zip s3://tranquility-build/frontend.zip
+        run: aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend_demo.zip s3://tranquility-build/frontend_demo.zip

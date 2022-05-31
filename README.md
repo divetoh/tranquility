@@ -1,7 +1,7 @@
 # Tranquility
 Web-based Personal Information Manager (PIM). Early development stage.
 
-![Tests](https://github.com/divetoh/tranquility/actions/workflows/run_tests.yml/badge.svg)
+![Tests](https://github.com/divetoh/tranquility/actions/workflows/tests_and_build.yml/badge.svg)
 
 [Demo](https://demo.divetoh.ru/)
 
