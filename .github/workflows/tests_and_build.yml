@@ -24,14 +24,16 @@ jobs:
 
       - name: Build frontend
         working-directory: ./frontend
-        run: npm ci
-        run: VUE_APP_DEMOMODE=0 npm build
-        run: zip frontend.zip ./dist/* -r
+        run: |
+          npm ci
+          VUE_APP_DEMOMODE=0 npm build
+          zip frontend.zip ./dist/* -r
 
       - name: Build frontend with demo-mode login
         working-directory: ./frontend
-        run: VUE_APP_DEMOMODE=1 npm build
-        run: zip frontend_demo.zip ./dist/* -r
+        run: |
+          VUE_APP_DEMOMODE=1 npm build
+          zip frontend_demo.zip ./dist/* -r
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
@@ -42,5 +44,6 @@ jobs:
 
       - name: Copy build to cloud storage
         working-directory: ./frontend
-        run: aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend.zip s3://tranquility-build/frontend.zip
-        run: aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend_demo.zip s3://tranquility-build/frontend_demo.zip
+        run: |
+          aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend.zip s3://tranquility-build/frontend.zip
+          aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend_demo.zip s3://tranquility-build/frontend_demo.zip
