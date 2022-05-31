@@ -9,4 +9,4 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run tests
-        run docker-compose -f docker-compose-tests.yml up --abort-on-container-exit --exit-code-from backend
+        run: docker-compose -f docker-compose-tests.yml up --abort-on-container-exit --exit-code-from backend
