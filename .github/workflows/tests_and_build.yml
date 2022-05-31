@@ -9,7 +9,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Run tests
-        run: docker-compose -f docker-compose-tests.yml up --abort-on-container-exit --exit-code-from backend
+      #  run: docker-compose -f docker-compose-tests.yml up --abort-on-container-exit --exit-code-from backend
 
   build:
     needs: tests
@@ -26,13 +26,13 @@ jobs:
         working-directory: ./frontend
         run: |
           npm ci
-          VUE_APP_DEMOMODE=0 npm build
+          VUE_APP_DEMOMODE=0 npm run build
           zip frontend.zip ./dist/* -r
 
       - name: Build frontend with demo-mode login
         working-directory: ./frontend
         run: |
-          VUE_APP_DEMOMODE=1 npm build
+          VUE_APP_DEMOMODE=1 npm run build
           zip frontend_demo.zip ./dist/* -r
 
       - name: Configure AWS Credentials
