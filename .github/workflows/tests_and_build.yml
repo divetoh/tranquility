@@ -30,7 +30,7 @@ jobs:
           zip frontend.zip ./dist/* -r
           VUE_APP_DEMOMODE=1 npm run build
           zip frontend_demo.zip ./dist/* -r
-          data > ./build_date
+          echo $NOW > ./build_date
 
       - name: Deploy to server
         uses: appleboy/scp-action@master
