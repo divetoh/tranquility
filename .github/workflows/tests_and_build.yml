@@ -43,7 +43,6 @@ jobs:
           target: "deploy"
 
       - name: Publish artifacts
-        working-directory: ./frontend
         uses: actions/upload-artifact@v3
         with:
           name: frontend-build
