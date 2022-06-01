@@ -33,14 +33,13 @@ jobs:
           data > ./build_date
 
       - name: Deploy to server
-        working-directory: ./frontend
         uses: appleboy/scp-action@master
         with:
           host: divetoh.ru
           username: deploy
           port: 22
           key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
-          source: "./frontend.zip,./frontend_demo.zip,./build_date"
+          source: "frontend/frontend.zip,frontend/frontend_demo.zip,frontend/build_date"
           target: "deploy"
 
       - name: Publish artifacts
@@ -49,6 +48,6 @@ jobs:
         with:
           name: frontend-build
           path: |
-            ./frontend.zip
-            ./frontend_demo.zip
-            ./build_date
+            frontend/frontend.zip
+            frontend/frontend_demo.zip
+            frontend/build_date
