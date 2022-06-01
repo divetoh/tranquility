@@ -28,22 +28,27 @@ jobs:
           npm ci
           VUE_APP_DEMOMODE=0 npm run build
           zip frontend.zip ./dist/* -r
-
-      - name: Build frontend with demo-mode login
-        working-directory: ./frontend
-        run: |
           VUE_APP_DEMOMODE=1 npm run build
           zip frontend_demo.zip ./dist/* -r
+          data > ./build_date
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ru-central1
-
-      - name: Copy build to cloud storage
+      - name: Deploy to server
         working-directory: ./frontend
-        run: |
-          aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend.zip s3://tranquility-build/frontend.zip
-          aws --endpoint-url=https://storage.yandexcloud.net s3 cp ./frontend_demo.zip s3://tranquility-build/frontend_demo.zip
+        uses: appleboy/scp-action@master
+        with:
+          host: divetoh.ru
+          username: deploy
+          port: 22
+          key: ${{ secrets.DEPLOY_PRIVATE_KEY }}
+          source: "./frontend.zip,./frontend_demo.zip,./build_date"
+          target: "deploy"
+
+      - name: Publish artifacts
+        working-directory: ./frontend
+        uses: actions/upload-artifact@v3
+        with:
+          name: frontend-build
+          path: |
+            ./frontend.zip
+            ./frontend_demo.zip
+            ./build_date
