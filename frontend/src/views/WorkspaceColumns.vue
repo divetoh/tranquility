@@ -217,7 +217,7 @@ export default {
         this.$_cleanDropstate();
       }
       event.preventDefault();
-     },
+    },
     scroll: function () {
       // Recalculate dropzones grid if workspace scrolled
       if (this.vars.dropenter_level > 0) this.$_calcDragGrid();

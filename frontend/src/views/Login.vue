@@ -9,8 +9,8 @@
       <q-tab-panels v-model="mode" animated>
         <q-tab-panel name="signin" class="q-gutter-y-md row justify-center q-pa-md q-px-xl">
           <q-form @submit="submit" class="q-gutter-md full-width">
-            <q-input v-model="email" label="e-mail" class="full-width"/>
-            <q-input type="password" v-model="password" label="Password" class="full-width"/>
+            <q-input v-model="email" label="e-mail" class="full-width" />
+            <q-input type="password" v-model="password" label="Password" class="full-width" />
             <br />
             <div>
               <q-btn label="Submit" type="submit" color="primary" />

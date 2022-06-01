@@ -26,9 +26,9 @@ jobs:
         working-directory: ./frontend
         run: |
           npm ci
-          VUE_APP_DEMOMODE=0 npm run build
+          VUE_APP_DEMOMODE=0 VUE_APP_DOMAIN="" npm run build
           zip frontend.zip ./dist/* -r
-          VUE_APP_DEMOMODE=1 npm run build
+          VUE_APP_DEMOMODE=1 VUE_APP_DOMAIN="" npm run build
           zip frontend_demo.zip ./dist/* -r
           echo $NOW > ./build_date
 
