@@ -92,6 +92,14 @@ export default {
       commit("workspaceSetColumnName", payload);
       await dispatch("aWorkspaceSave", payload.workspace);
     },
+    async aWorkspaceSetColumnProps({ commit, dispatch }, payload) {
+      commit("workspaceSetColumnProps", payload);
+      await dispatch("aWorkspaceSave", payload.workspace);
+    },
+    async aWorkspaceSetBlockProps({ commit, dispatch }, payload) {
+      commit("workspaceSetBlockProps", payload);
+      await dispatch("aWorkspaceSave", payload.workspace);
+    },
     async aWorkspaceSetName({ commit, dispatch }, { workspace, name }) {
       commit("workspaceSetName", { workspace, name });
       await dispatch("aWorkspaceSave", workspace);
@@ -159,6 +167,18 @@ export default {
     },
     workspaceSetColumnName(state, { workspace, name, index }) {
       state.workspace_lst[workspace].workspace.content[index].name = name;
+    },
+    workspaceSetColumnProps(state, { workspace, col, props }) {
+      const ws = state.workspace_lst[workspace].workspace.content[col];
+      for (var p in props) {
+        ws[p] = props[p];
+      }
+    },
+    workspaceSetBlockProps(state, { workspace, col, row, props }) {
+      const ws = state.workspace_lst[workspace].workspace.content[col].content[row];
+      for (var p in props) {
+        ws[p] = props[p];
+      }
     },
     workspaceSetName(state, { workspace, name }) {
       state.workspace_lst[workspace].name = name;

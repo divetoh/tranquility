@@ -7,7 +7,13 @@
     @dragend="dragEnd"
     ref="wrapperRef"
   >
-    <BlockMarkdown v-if="block.type == 'markdown'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
+    <BlockMarkdown
+      v-if="block.type == 'markdown'"
+      :block="block"
+      :actions="actions"
+      @delBlock="delBlock"
+      @setHeader="setHeader"
+    />
     <TaskList v-if="block.type == 'tasklist'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
     <TaskList v-if="block.type == 'coretasklist'" :actions="actions" @delBlock="delBlock" />
   </div>
@@ -61,6 +67,14 @@ export default {
         workspace: this.workspace,
         row: this.row,
         col: this.col,
+      });
+    },
+    async setHeader(mode, text) {
+      this.$store.dispatch("aWorkspaceSetBlockProps", {
+        workspace: this.workspace,
+        row: this.row,
+        col: this.col,
+        props: { headerMode: mode, headerCustomText: text },
       });
     },
   },

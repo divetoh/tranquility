@@ -8,7 +8,12 @@
     @scroll="scroll"
     ref="wrapperRef"
   >
-    <div class="ws_col_container w400" v-for="(column, index) in workspace.workspace.content" :key="column.type">
+    <div
+      v-for="(column, index) in workspace.workspace.content"
+      class="ws_col_container"
+      :class="colClass(index)"
+      :key="column.type"
+    >
       <div class="ws_col_wrap">
         <!-- Column header -->
         <q-bar
@@ -26,6 +31,25 @@
             draggable="True"
             :data-col="index"
           >
+            <q-btn-group outline class="hover_block">
+              <q-btn dense flat icon="settings">
+                <q-tooltip :delay="550" anchor="top middle" self="center middle"> Customize column </q-tooltip>
+                <q-menu>
+                  <div class="column w300 q-pa-md">
+                    <div>Width:</div>
+                    <q-slider
+                      :model-value="getColumnWidth(index)"
+                      @change="(value) => setColumnWidth(index, value)"
+                      snap
+                      :min="0"
+                      :max="10"
+                      markers
+                    />
+                  </div>
+                </q-menu>
+              </q-btn>
+            </q-btn-group>
+
             <q-space />
             <div style="cursor: pointer">
               &nbsp;{{ column.name }}&nbsp;
@@ -337,6 +361,29 @@ export default {
     },
     async setColumnName(name, index) {
       await this.$store.dispatch("aWorkspaceSetColumnName", { workspace: this.uid, name, index });
+    },
+    colClass(index) {
+      var cw = "w400";
+      const col = this.$store.state.workspace.workspace_lst[this.uid].workspace.content[index];
+      if (col.col_width) cw = "w" + col.col_width;
+      return cw;
+    },
+    async setColumnWidth(index, value) {
+      const col = this.$store.state.workspace.workspace_lst[this.uid].workspace.content[index];
+      const width = parseInt(value) * 50 + 200;
+      if (parseInt(col.col_width) != width) {
+        await this.$store.dispatch("aWorkspaceSetColumnProps", {
+          workspace: this.uid,
+          col: index,
+          props: { col_width: width },
+        });
+      }
+    },
+    getColumnWidth(index) {
+      const col = this.$store.state.workspace.workspace_lst[this.uid].workspace.content[index];
+      var width = 400;
+      if (col.col_width) width = parseInt(col.col_width);
+      return (width - 200) / 50;
     },
   },
   computed: mapState({
