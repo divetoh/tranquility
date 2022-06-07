@@ -2,7 +2,7 @@ from datetime import date
 from typing import Any, Optional, Union
 
 from fastapi.encoders import jsonable_encoder
-from sqlalchemy import delete, select
+from sqlalchemy import delete, literal, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models import DailyTask, DailyTaskState
@@ -77,16 +77,13 @@ class CRUDDailyTaskState():
         Search all days>=`fromdate`, which allready have status for any dailytask,
         and add status for `dailytask` to this day.
         """
-        # TODO: check "group by" in ORM?
-        query = select(DailyTaskState.statedate).join(DailyTask).filter(
+        dates = select(DailyTaskState.statedate, literal(dailytask), literal(0)).join(DailyTask).filter(
             DailyTask.user == user,
             DailyTaskState.statedate >= fromdate,
-        )
-        result = (await db.execute(query)).scalars().all()
-        dates = set([x for x in result])
-        for dt in dates:
-            db_obj = DailyTaskState(state=0, statedate=dt, dailytask=dailytask)
-            db.add(db_obj)
+        ).group_by(DailyTaskState.statedate)
+        table = DailyTaskState.__table__    # type: ignore
+        query = table.insert().from_select(['statedate', 'dailytask', 'state'], dates)
+        await db.execute(query)
         await db.commit()
 
     async def remove_chain(self, db: AsyncSession, user: int, *, fromdate: date, dailytask: int) -> int:

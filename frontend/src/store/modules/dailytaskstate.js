@@ -26,6 +26,14 @@ export default {
         commit("dailytaskstateUpdate", { statedate, taskstate, dailytask });
       }
     },
+    async aDailytaskstateRemoveAfterDate({ commit }, { dailytask, fromdate }) {
+      // Clientside clear dailytaskstates after date
+      commit("dailytaskstateRemoveAfterDate", { dailytask, fromdate });
+    },
+    async aDailytaskstateCreateAfterDate({ commit }, { dailytask, fromdate, taskstate }) {
+      // Clientside fill dailytaskstates after date
+      commit("dailytaskstateCreateAfterDate", { dailytask, fromdate, taskstate });
+    },
   },
   mutations: {
     dailytaskstateSet(state, payload) {
@@ -43,6 +51,18 @@ export default {
     },
     dailytaskstateDeleteByTask(state, payload) {
       for (var i in state.lst) for (var j in state.lst[i]) if (j == payload) delete state.lst[i][j];
+    },
+    dailytaskstateRemoveAfterDate(state, { dailytask, fromdate }) {
+      for (var i in state.lst) {
+        if (i < fromdate) continue;
+        if (state.lst[i][dailytask] != undefined) delete state.lst[i][dailytask];
+      }
+    },
+    dailytaskstateCreateAfterDate(state, { dailytask, fromdate, taskstate }) {
+      for (var i in state.lst) {
+        if (i < fromdate) continue;
+        state.lst[i][dailytask] = taskstate;
+      }
     },
   },
 };

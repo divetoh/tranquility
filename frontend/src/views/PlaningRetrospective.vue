@@ -6,29 +6,37 @@
   </div>
   <div class="row full-width" v-else>
     <q-card class="col-xs-12 q-pa-md">
+      <!-- Table with DailyTask and RegularTask -->
       <div class="q-mb-lg">
         <q-markup-table dense bordered class="text-left" separator="cell">
           <thead class="bg-indigo-3 text-center">
             <tr>
               <th>Daily task</th>
               <th v-for="d in days" :key="d" @click="showsummary(d)">{{ d.substring(8, 10) }}</th>
+              <th>Total</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="t in dailytask" :key="t">
+            <tr v-for="t in dailytask_nonempty()" :key="t">
               <td>{{ t.name }}</td>
               <td v-for="d in days" :key="d" :class="dailycolor(d, t.uid)">&nbsp;</td>
+              <td>
+                <span class="text-green-8">{{ t.count[1] }}</span> /
+                <span class="text-blue-8">{{ t.count[2] }}</span> /
+                <span class="text-grey-8">{{ t.count[0] }}</span>
+              </td>
             </tr>
             <tr>
               <td style="border-top: solid 1px grey">Complited regular tasks</td>
               <td style="border-top: solid 1px grey" v-for="d in days" :key="d" class="text-center">
                 {{ countregulartask(d) }}
               </td>
+              <td style="border-top: solid 1px grey">{{ countallregulartask() }}</td>
             </tr>
           </tbody>
         </q-markup-table>
       </div>
-
+      <!--  Table with DailyState  -->
       <div>
         <q-markup-table dense bordered class="text-left">
           <thead class="bg-indigo-3">
@@ -87,27 +95,50 @@ export default {
       date.setDate(date.getDate() + 1);
     }
     // Load DayState, DailyTaskState, RegularTaskState for this range
-    // TODO: Check already loaded data
     const dayrange = { start: this.days[0], end: this.days[this.days.length - 1] };
-    await this.$store.dispatch("aDaystateLoadRng", dayrange); // TODO
-    await this.$store.dispatch("aDailytaskstateLoadRng", dayrange); // TODO
-    await this.$store.dispatch("aRegulartaskstateLoadRng", dayrange); // TODO
+    await this.$store.dispatch("aDaystateLoadRng", dayrange);
+    await this.$store.dispatch("aDailytaskstateLoadRng", dayrange);
+    await this.$store.dispatch("aRegulartaskstateLoadRng", dayrange);
     // TODO: Format daily task list
 
     this.loaded = true;
   },
   methods: {
-    rangecolor: function (color) {
+    rangecolor(color) {
       return ["", "bg-yellow-1", "bg-yellow-2", "bg-lime-3", "bg-lime-4", "bg-light-green-4"][color];
     },
-    dailycolor: function (day, task) {
+    dailycolor(day, task) {
       if (this.dailytaskstate[day] != undefined && this.dailytaskstate[day][task] != undefined)
         return ["bg-grey-7", "bg-light-green-4", "bg-light-blue-4"][this.dailytaskstate[day][task]];
       return "bg-grey-2";
     },
-    countregulartask: function (day) {
+    countregulartask(day) {
       if (this.regulartaskstate[day] == undefined || Object.keys(this.regulartaskstate[day]).length == 0) return " ";
       return Object.keys(this.regulartaskstate[day]).length;
+    },
+    countallregulartask() {
+      var count = 0;
+      for (var j in this.days) {
+        if (this.regulartaskstate[this.days[j]] == undefined) continue;
+        count += Object.keys(this.regulartaskstate[this.days[j]]).length;
+      }
+      return count;
+    },
+    dailytask_nonempty() {
+      var lst = [];
+      const tasks = this.$store.state.dailytask.lst;
+      const states = this.$store.state.dailytaskstate.lst;
+      for (var i in tasks) {
+        const tsk = tasks[i];
+        var count = [0, 0, 0];
+        for (var j in this.days) {
+          if (states[this.days[j]] == undefined) continue;
+          if (states[this.days[j]][i] == undefined) continue;
+          count[parseInt(states[this.days[j]][i])] += 1;
+        }
+        if (count[0] + count[1] + count[2] > 0) lst.push({ name: tsk.name, uid: i, count: count });
+      }
+      return lst;
     },
     async showsummary(summary_date) {
       Dialog.create({

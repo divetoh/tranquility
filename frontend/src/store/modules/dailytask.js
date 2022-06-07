@@ -6,31 +6,32 @@ export default {
   },
   actions: {
     async aDailytasksLoad({ commit }) {
-      try {
-        const response = await api.dailytask.get_all();
-        if (response.data) {
-          commit("dailytaskSet", response.data);
-        }
-      } catch (error) {
-        //await dispatch("aCheckApiError", error);
+      const response = await api.dailytask.get_all();
+      if (response.data) {
+        commit("dailytaskSet", response.data);
       }
     },
-    async aDailytaskUpdate({ commit, rootState }, { uid, data }) {
+    async aDailytaskUpdate({ commit, dispatch, rootState }, { uid, data }) {
+      const dt = rootState.current.date;
       commit("dailytaskUpdate", { uid, data });
-      api.dailytask.update(uid, data, { operationdate: rootState.current.date });
-      // TODO: Create/remove dailytaskstate
+      api.dailytask.update(uid, data, { operationdate: dt });
+      if (data.is_active === false) await dispatch("aDailytaskstateRemoveAfterDate", { dailytask: uid, fromdate: dt });
+      else if (data.is_active === true)
+        await dispatch("aDailytaskstateCreateAfterDate", { dailytask: uid, fromdate: dt, taskstate: 0 });
     },
-    async aDailytaskCreate({ commit, rootState }, data) {
-      const response = await api.dailytask.create(data, { operationdate: rootState.current.date });
+    async aDailytaskCreate({ commit, dispatch, rootState }, data) {
+      const dt = rootState.current.date;
+      const response = await api.dailytask.create(data, { operationdate: dt });
       if (response.data) {
         commit("dailytaskAppend", response.data);
       }
-      // TODO: Create dailytaskstate
+      await dispatch("aDailytaskstateCreateAfterDate", { dailytask: response.data.uid, fromdate: dt, taskstate: 0 });
     },
-    async aDailytaskDelete({ commit }, { uid }) {
+    async aDailytaskDelete({ commit, dispatch, rootState }, { uid }) {
       commit("dailytaskDelete", uid);
       commit("dailytaskstateDeleteByTask", parseInt(uid));
       await api.dailytask.delete(uid);
+      await dispatch("aDailytaskstateRemoveAfterDate", { dailytask: uid, fromdate: rootState.current.date });
     },
   },
   mutations: {
