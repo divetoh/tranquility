@@ -4,11 +4,13 @@ from .dailytaskstate import (SDailyTaskStateCreate, SDailyTaskStateOut,
 from .daystate import SDayStateCreate, SDayStateOut, SDayStateUpdate
 from .jsondoc import SJSONDocCreate, SJSONDocOut, SJSONDocUpdate
 from .markdown import SMarkdownCreate, SMarkdownOut, SMarkdownUpdate
-from .memorize import (SMemorizeCardCreate, SMemorizeCardOut,
+from .memorize import (SMemorizeAnswerIn, SMemorizeAnswerOut,
+                       SMemorizeCardCreate, SMemorizeCardOut,
                        SMemorizeCardUpdate, SMemorizeCategoryCreate,
                        SMemorizeCategoryOut, SMemorizeCategoryUpdate,
-                       SMemorizeStackCreate, SMemorizeStackOut,
-                       SMemorizeStackUpdate)
+                       SMemorizeHistoryOut, SMemorizeStackCreate,
+                       SMemorizeStackOut, SMemorizeStackUpdate,
+                       SMemorizeStateCreate)
 from .msg import SBoolOut, SMsgOut
 from .regulartask import (SRegularTaskCreate, SRegularTaskOut,
                           SRegularTaskUpdate)

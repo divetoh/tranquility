@@ -85,6 +85,10 @@ export default {
         return response.data.uid;
       }
     },
+    async aMemorizeCardAnswer({ commit, rootState }, { uid, state }) {
+      const response = await api.memorize_card.answer(uid, { state, answerdate: rootState.current.date });
+      commit("memorizeCardSetStatus", { uid, cardstate: response.data.state });
+    },
   },
   mutations: {
     // --- Stack ----------------------------------------------------------
@@ -137,6 +141,9 @@ export default {
     },
     memorizeCardDelete(state, uid) {
       delete state.card[uid];
+    },
+    memorizeCardSetStatus(state, { uid, cardstate }) {
+      state.card[uid].state_r = [cardstate];
     },
   },
 };

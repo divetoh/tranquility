@@ -43,6 +43,12 @@ class APIBase {
   }
 }
 
+var memorize_card = new APIBase("memorize/card");
+memorize_card.answer = async function (uid, data, url_param) {
+  const param = url_param == undefined ? "" : make_URL_param(url_param);
+  return axios.post(this.path + uid + "/answer" + param, data, authHeaders());
+};
+
 export const api = {
   user: new APIBase("users"),
   markdown: new APIBase("markdown"),
@@ -52,7 +58,7 @@ export const api = {
   daystate: new APIBase("daystate"),
   regulartaskstate: new APIBase("regulartaskstate"),
   dailytaskstate: new APIBase("dailytaskstate"),
-  memorize_card: new APIBase("memorize/card"),
+  memorize_card: memorize_card,
   memorize_stack: new APIBase("memorize/stack"),
   memorize_category: new APIBase("memorize/category"),
 

@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import contains_eager, selectinload
 
 from app import schemas
 from app.models import MemorizeCard, MemorizeCategory, MemorizeStack
@@ -22,11 +22,12 @@ class CRUDMemorizeCard():
         limit: int = 100,
         stack: Optional[int] = None,
     ) -> list[MemorizeCard]:
-        query = select(MemorizeCard).join(MemorizeCard.stack_r)
+        query = select(MemorizeCard).join(MemorizeCard.stack_r).\
+            outerjoin(MemorizeCard.state_r).options(contains_eager('state_r'))
         if stack is not None:
             query = query.filter(MemorizeCard.stack == stack)
         result = await db.execute(query.filter(MemorizeStack.user == user).offset(skip).limit(limit))
-        return result.scalars().all()
+        return result.unique().scalars().all()
 
     async def get(self, db: AsyncSession, user: int, *, uid: Any, r404: bool = False) -> Optional[MemorizeCard]:
         """
@@ -36,9 +37,9 @@ class CRUDMemorizeCard():
         * 403 - if user not own object.
         * 404 - if object absent, and `r404` parameter is True.
         """
-        query = select(MemorizeCard).join(MemorizeStack).options(selectinload(MemorizeCard.stack_r)).\
-            filter(MemorizeCard.uid == uid)
-        result = (await db.execute(query)).scalars().first()
+        query = select(MemorizeCard).join(MemorizeStack).outerjoin(MemorizeCard.state_r).\
+            options(contains_eager('state_r').contains_eager('stack_r')).filter(MemorizeCard.uid == uid)
+        result = (await db.execute(query)).unique().scalars().first()
         if result and result.stack_r.user != user:
             raise HTTPException(status_code=403, detail="Access denied.")
         if r404 and not result:

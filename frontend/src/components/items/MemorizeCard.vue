@@ -1,6 +1,29 @@
 <template>
   <div clickable dense class="memorize_card row" @click="showCard = true">
     <div class="card_content_wrapper" :class="state">
+      <div>
+        <template v-if="cardState">
+          <q-badge class="q-px-xs q-ma-xs">
+            {{ cardState.state }}
+            <q-tooltip :offset="[10, 10]" class="text-body2">
+              Right answers count: {{ cardState.state }} <br />
+              Last answer date: {{ cardState.lastdate }} <br />
+              Next recomended date: {{ cardState.nextdate }} <br />
+            </q-tooltip>
+          </q-badge>
+          <q-badge
+            class="q-px-xs q-ma-xs"
+            v-if="cardState.nextdate > currentDate && state == 'unanswered'"
+            color="green"
+          >
+            It's not time yet
+          </q-badge>
+        </template>
+        <q-badge v-else class="q-px-xs q-ma-xs" color="grey">
+          &dash;
+          <q-tooltip :offset="[10, 10]" class="text-body2"> Not yet answered. </q-tooltip>
+        </q-badge>
+      </div>
       <div class="triangle" :style="'border-top-color: ' + cardHex" v-if="cardHex">
         <q-tooltip :offset="[10, 10]" class="text-body2">
           {{ cardCategory }}
@@ -72,10 +95,12 @@ export default {
   methods: {
     async goodAnswer() {
       this.showCard = false;
+      this.$store.dispatch("aMemorizeCardAnswer", { uid: this.uid, state: 1 });
       this.$emit("correct");
     },
     async badAnswer() {
       this.showCard = false;
+      this.$store.dispatch("aMemorizeCardAnswer", { uid: this.uid, state: 0 });
       this.$emit("incorrect");
     },
     async setSection(section) {
@@ -111,6 +136,12 @@ export default {
     cardCategory: function (state) {
       return state.memorize.category[state.memorize.card[this.uid].category].name;
     },
+    cardState: function (state) {
+      return state.memorize.card[this.uid].state_r[0];
+    },
+    currentDate: function (state) {
+      return state.current.date;
+    },
   }),
 };
 </script>
@@ -125,6 +156,8 @@ export default {
   cursor: pointer;
   overflow: hidden;
   background: url("../../assets/card_side1.png");
+  border: solid 1px #b7c3cd;
+  box-shadow: 1px 1px 4px #b7c3cd;
 }
 
 .correct:after {
@@ -137,6 +170,7 @@ export default {
   left: 0;
   right: 0;
   background: rgba(0, 100, 0, 0.2);
+  pointer-events: none;
 }
 
 .incorrect:after {
@@ -149,6 +183,7 @@ export default {
   left: 0;
   right: 0;
   background: rgba(100, 0, 0, 0.2);
+  pointer-events: none;
 }
 
 .card_large {

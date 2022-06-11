@@ -16,6 +16,17 @@
             @correct="goodAnswer(card)"
             @incorrect="badAnswer(card)"
           />
+          <template v-if="!hideUntimely">
+            <MemorizeCard
+              v-for="card in untimely"
+              :key="card"
+              :uid="card"
+              state="unanswered"
+              :preview="preview"
+              @correct="goodAnswer(card)"
+              @incorrect="badAnswer(card)"
+            />
+          </template>
           <MemorizeCard
             v-for="card in correct"
             :key="card"
@@ -40,6 +51,7 @@
       <q-card-actions align="right" class="bg-white text-primary row">
         <!--   Button area   -->
         <q-toggle v-model="preview" label="Question preview" />
+        <q-toggle v-model="hideUntimely" label="Нide untimely" />
         <q-space />
         <q-btn color="primary" no-caps label="Close" @click="onOKClick" />
       </q-card-actions>
@@ -59,7 +71,9 @@ export default {
       cards: [],
       correct: [],
       incorrect: [],
+      untimely: [],
       preview: false,
+      hideUntimely: true,
     };
   },
   components: {
@@ -68,10 +82,17 @@ export default {
   created: async function () {
     if (this.test.mode == "fullstack") {
       const all_cards = await this.$store.dispatch("aMemorizeCardLoadByStack", { stack: this.test.stack });
+      const cur_date = this.$store.state.current.date;
       for (var i of all_cards) {
-        if (this.$store.state.memorize.card[i].is_active) this.cards.push(i);
+        const card = this.$store.state.memorize.card[i];
+        if (card.is_active) {
+          if (card.state_r[0] && card.state_r[0].nextdate > cur_date) this.untimely.push(i);
+          else this.cards.push(i);
+        }
       }
-      this.cards.sort(() => Math.random() - 0.5); // Simple shuffle
+      // Simple shuffle
+      this.cards.sort(() => Math.random() - 0.5);
+      this.untimely.sort(() => Math.random() - 0.5);
     }
   },
   methods: {
@@ -89,17 +110,17 @@ export default {
     },
     goodAnswer(uid) {
       const index = this.cards.indexOf(uid);
-      if (index !== -1) {
-        this.cards.splice(index, 1);
-        this.correct.push(uid);
-      }
+      if (index !== -1) this.cards.splice(index, 1);
+      const index2 = this.untimely.indexOf(uid);
+      if (index2 !== -1) this.untimely.splice(index2, 1);
+      this.correct.push(uid);
     },
     badAnswer(uid) {
       const index = this.cards.indexOf(uid);
-      if (index !== -1) {
-        this.cards.splice(index, 1);
-        this.incorrect.push(uid);
-      }
+      if (index !== -1) this.cards.splice(index, 1);
+      const index2 = this.untimely.indexOf(uid);
+      if (index2 !== -1) this.untimely.splice(index2, 1);
+      this.incorrect.push(uid);
     },
   },
 };

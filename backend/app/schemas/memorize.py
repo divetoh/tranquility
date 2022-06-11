@@ -1,5 +1,6 @@
+from datetime import date, datetime
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, conlist
 
 
 class SMemorizeStackOut(BaseModel):
@@ -55,11 +56,21 @@ class SMemorizeCategoryUpdate(BaseModel):
     color: Optional[int]
 
 
+class SMemorizeCardStateOut(BaseModel):
+    state: int
+    lastdate: date
+    nextdate: date
+
+    class Config:
+        orm_mode = True
+
+
 class SMemorizeCardOut(BaseModel):
     """ Memory Card Response """
     uid: int
     stack: int
     category: Optional[int]
+    state_r: conlist(SMemorizeCardStateOut, min_items=0, max_items=1)  # type: ignore
     is_active: bool
     name: str
     obverse: str
@@ -90,3 +101,43 @@ class SMemorizeCardUpdate(BaseModel):
     obverse: Optional[str]
     reverse: Optional[str]
     hint: Optional[str]
+
+
+class SMemorizeAnswerIn(BaseModel):
+    """ MemorizeCard answered """
+    state: int
+    answerdate: date
+
+
+class SMemorizeStateCreate(BaseModel):
+    """ MemorizeCardState create """
+    state: int
+    lastdate: date
+    nextdate: Optional[date]
+
+
+class SMemorizeHistoryOut(BaseModel):
+    """ MemorizeCardHistory response """
+    uid: int
+    card: int
+    state: int
+    statedate: datetime
+
+    class Config:
+        orm_mode = True
+
+
+class SMemorizeStateOut(BaseModel):
+    """ MemorizeCardState response """
+    card: int
+    state: int
+    lastdate: date
+    nextdate: Optional[date]
+
+    class Config:
+        orm_mode = True
+
+
+class SMemorizeAnswerOut(BaseModel):
+    state: SMemorizeStateOut
+    history: SMemorizeHistoryOut
