@@ -83,4 +83,3 @@ class MemorizeCardHistory(Base, MixinUID):
     statedate: datetime = Column(DateTime(), nullable=False, server_default=func.now())
 
     card_r: Any = relationship("MemorizeCard", back_populates="history_r")
-`nextdate` date DEFAULT current_timestamp()
