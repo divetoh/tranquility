@@ -65,17 +65,24 @@ class SMemorizeCardStateOut(BaseModel):
         orm_mode = True
 
 
-class SMemorizeCardOut(BaseModel):
+class SMemorizeCardBaseOut(BaseModel):
     """ Memory Card Response """
     uid: int
     stack: int
     category: Optional[int]
-    state_r: conlist(SMemorizeCardStateOut, min_items=0, max_items=1)  # type: ignore
     is_active: bool
     name: str
     obverse: str
     reverse: str
     hint: Optional[str]
+
+    class Config:
+        orm_mode = True
+
+
+class SMemorizeCardOut(SMemorizeCardBaseOut):
+    """ Memory Card Response with state"""
+    state_r: conlist(SMemorizeCardStateOut, min_items=0, max_items=1)  # type: ignore
 
     class Config:
         orm_mode = True

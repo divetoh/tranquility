@@ -48,7 +48,7 @@ async def update_memorizecard(
     return schemas.SBoolOut(state=True)
 
 
-@router.post("/", response_model=schemas.SMemorizeCardOut)
+@router.post("/", response_model=schemas.SMemorizeCardBaseOut)
 async def create_memorizecard(
     card_in: schemas.SMemorizeCardCreate,
     _db: AsyncSession = Depends(deps.get_db),

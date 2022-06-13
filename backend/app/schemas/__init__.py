@@ -5,12 +5,12 @@ from .daystate import SDayStateCreate, SDayStateOut, SDayStateUpdate
 from .jsondoc import SJSONDocCreate, SJSONDocOut, SJSONDocUpdate
 from .markdown import SMarkdownCreate, SMarkdownOut, SMarkdownUpdate
 from .memorize import (SMemorizeAnswerIn, SMemorizeAnswerOut,
-                       SMemorizeCardCreate, SMemorizeCardOut,
-                       SMemorizeCardUpdate, SMemorizeCategoryCreate,
-                       SMemorizeCategoryOut, SMemorizeCategoryUpdate,
-                       SMemorizeHistoryOut, SMemorizeStackCreate,
-                       SMemorizeStackOut, SMemorizeStackUpdate,
-                       SMemorizeStateCreate)
+                       SMemorizeCardBaseOut, SMemorizeCardCreate,
+                       SMemorizeCardOut, SMemorizeCardUpdate,
+                       SMemorizeCategoryCreate, SMemorizeCategoryOut,
+                       SMemorizeCategoryUpdate, SMemorizeHistoryOut,
+                       SMemorizeStackCreate, SMemorizeStackOut,
+                       SMemorizeStackUpdate, SMemorizeStateCreate)
 from .msg import SBoolOut, SMsgOut
 from .regulartask import (SRegularTaskCreate, SRegularTaskOut,
                           SRegularTaskUpdate)
