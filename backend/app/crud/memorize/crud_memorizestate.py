@@ -1,6 +1,5 @@
 from typing import Any, Optional
 
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -46,13 +45,9 @@ class CRUDMemorizeCardState():
         """
         Update MemorizeCardState from dict. Only filled fields will be updated.
         """
-        obj_data = jsonable_encoder(db_obj)
-        for field in obj_data:
-            if field in obj_in and field not in ("user", "card"):
-                setattr(db_obj, field, obj_in[field])
-        db.add(db_obj)
-        await db.commit()
-        await db.refresh(db_obj)
+        if db_obj.update_bydict(obj_in) > 0:
+            await db.commit()
+            await db.refresh(db_obj)
         return db_obj
 
 

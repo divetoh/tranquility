@@ -99,24 +99,16 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         * db_obj - SQLAlchemy object selected from DB.
         * obj_in - Dict or pydantic update schema with new data.
         """
-        obj_data = jsonable_encoder(db_obj)
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.dict(exclude_unset=True)
-        for field in obj_data:
-            if field in update_data:
-                setattr(db_obj, field, update_data[field])
-        try:
-            db.add(db_obj)
-            await db.commit()
-            await db.refresh(db_obj)
-        except IntegrityError:
-            await db.rollback()
-            raise HTTPException(
-                status_code=409,
-                detail="Non uniq parameter.",
-            ) from None
+        if db_obj.update_bydict(obj_in) > 0:
+            try:
+                await db.commit()
+                await db.refresh(db_obj)
+            except IntegrityError:
+                await db.rollback()
+                raise HTTPException(
+                    status_code=409,
+                    detail="Non uniq parameter.",
+                ) from None
         return db_obj
 
     async def remove(self, db: AsyncSession, *, uid: int, r404: bool = False) -> int:
@@ -234,24 +226,16 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
 
         Method don't check owner and don't rise exception.
         """
-        obj_data = jsonable_encoder(db_obj)
-        if isinstance(obj_in, dict):
-            update_data = obj_in
-        else:
-            update_data = obj_in.dict(exclude_unset=True)
-        for field in obj_data:
-            if field in update_data:
-                setattr(db_obj, field, update_data[field])
-        try:
-            db.add(db_obj)
-            await db.commit()
-            await db.refresh(db_obj)
-        except IntegrityError:
-            await db.rollback()
-            raise HTTPException(
-                status_code=409,
-                detail="Non uniq parameter.",
-            ) from None
+        if db_obj.update_bydict(obj_in) > 0:
+            try:
+                await db.commit()
+                await db.refresh(db_obj)
+            except IntegrityError:
+                await db.rollback()
+                raise HTTPException(
+                    status_code=409,
+                    detail="Non uniq parameter.",
+                ) from None
         return db_obj
 
     async def remove(
