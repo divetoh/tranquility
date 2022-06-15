@@ -5,18 +5,16 @@ from fastapi.security import OAuth2PasswordBearer
 from jose import jwt    # type: ignore
 from pydantic import ValidationError
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
 
 from app import crud, models, schemas
 from app.core import security
 from app.core.config import settings
-from app.db.session import engine
+from app.db.session import async_session
 
 reusable_oauth2 = OAuth2PasswordBearer(tokenUrl=f"{settings.API_STR}/login/access-token")
 
 
 async def get_db() -> AsyncGenerator[AsyncSession, None]:
-    async_session = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
     async with async_session() as session:
         yield session
 
