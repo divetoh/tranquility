@@ -62,7 +62,6 @@ async def test_user_create(db: AsyncSession, superuser: models.User) -> None:
         r = await ac.post("/users/", json=user.dict())
     assert r.status_code == 200
     newuser = r.json()
-    await db.commit()
     dbuser = await crud.user.get(db, uid=newuser["uid"])
     assert dbuser is not None
     dbuser.password = ""    # type: ignore

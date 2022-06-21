@@ -19,11 +19,13 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         """
         Get user by e-mail.
         """
-        result = await db.execute(select(User).filter(User.email == email))
-        return result.scalars().first()
+        result = await db.scalars(select(User).filter(User.email == email))
+        await db.commit()
+        return result.first()
 
     async def get_count(self, db: AsyncSession) -> int:
         result = await db.execute(select(func.count(User.uid)))
+        await db.commit()
         return result.scalar_one()
 
     async def get_demo_users(self, db: AsyncSession) -> list[User]:
@@ -32,12 +34,13 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         """
         if settings.DEMO_USERS == 0:
             return []
-        result = await db.execute(select(User).filter(
+        result = await db.scalars(select(User).filter(
             User.is_superuser == 0,
             User.email.like("%@test.test"),
             User.created_dt < datetime.now() - timedelta(minutes=settings.DEMO_ACCESS_TOKEN_EXPIRE_MINUTES),
         ))
-        return result.scalars().all()
+        await db.commit()
+        return result.all()
 
     async def create(self, db: AsyncSession, *, obj_in: SUserCreate, data_source: Optional[str] = "init.json") -> User:
         """
@@ -56,8 +59,9 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         )
         try:
             db.add(db_obj)
-            await db.commit()
+            await db.flush()
             await db.refresh(db_obj)
+            await db.commit()
         except IntegrityError:
             await db.rollback()
             raise HTTPException(

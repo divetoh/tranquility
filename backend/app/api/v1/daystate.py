@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Any
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, models, schemas
@@ -20,10 +20,14 @@ async def read_daystate(
     Return DayState. Create DayState, if absent.
     """
     daystate = await crud.daystate.get(_db, _user.uid, statedate=statedate)
-    if daystate is None:
+    if not daystate:
         # Create day state if it absent
         newdaystate = schemas.SDayStateCreate(statedate=statedate)
         daystate = await crud.daystate.create(_db, _user.uid, obj_in=newdaystate)
+
+    if not daystate:
+        raise HTTPException(status_code=500, detail="Can't create daystate")
+
     return daystate
 
 
@@ -56,6 +60,9 @@ async def update_daystate(
         # Create day state if it absent
         newdaystate = schemas.SDayStateCreate(statedate=statedate)
         daystate = await crud.daystate.create(_db, _user.uid, obj_in=newdaystate)
+
+    if not daystate:
+        raise HTTPException(status_code=500, detail="Can't create daystate")
 
     daystate = await crud.daystate.update_byobj(_db, db_obj=daystate, obj_in=daystate_in)
     return schemas.SBoolOut(state=True)

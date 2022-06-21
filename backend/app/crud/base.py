@@ -45,22 +45,25 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         Raise HTTPException:
         * 404 - if object absent, and `r404` parameter is True.
         """
-        query = await db.execute(select(self.model).filter(self.model.uid == uid))
-        result = query.scalars().first()
+        query = await db.scalars(select(self.model).filter(self.model.uid == uid))
+        result = query.first()
+        await db.commit()
         if r404 and not result:
             raise HTTPException(status_code=404, detail="Object not found.")
         return result
 
     async def get_multi(self, db: AsyncSession, *, skip: int = 0, limit: int = 100) -> list[ModelType]:
-        result = await db.execute(select(self.model).offset(skip).limit(limit))
-        return result.scalars().all()
+        result = await db.scalars(select(self.model).offset(skip).limit(limit))
+        await db.commit()
+        return result.all()
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
         obj_in_data = jsonable_encoder(obj_in)
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
-        await db.commit()
+        await db.flush()
         await db.refresh(db_obj)
+        await db.commit()
         return db_obj
 
     async def update(
@@ -101,8 +104,9 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         """
         if db_obj.update_bydict(obj_in) > 0:
             try:
-                await db.commit()
+                await db.flush()
                 await db.refresh(db_obj)
+                await db.commit()
             except IntegrityError:
                 await db.rollback()
                 raise HTTPException(
@@ -145,8 +149,9 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         * 403 - if user not own object.
         * 404 - if object absent, and `r404` parameter is True.
         """
-        query = await db.execute(select(self.model).filter(self.model.uid == uid))
-        result = query.scalars().first()
+        query = await db.scalars(select(self.model).filter(self.model.uid == uid))
+        await db.commit()
+        result = query.first()
         if result and result.user != user:
             raise HTTPException(status_code=403, detail="Access denied.")
         if r404 and not result:
@@ -161,8 +166,9 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         * 403 - if user not own object.
         * 404 - if object absent.
         """
-        query = await db.execute(select(self.model.user).filter(self.model.uid == uid))
-        result = query.scalars().first()
+        query = await db.scalars(select(self.model.user).filter(self.model.uid == uid))
+        await db.commit()
+        result = query.first()
         if result is None:
             raise HTTPException(status_code=404, detail="Object absent.")
         if result != user:
@@ -174,16 +180,18 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
 
         Method don't rise 403 exception, but return only objects owned by user.
         """
-        result = await db.execute(select(self.model).filter(self.model.user == user).offset(skip).limit(limit))
-        return result.scalars().all()
+        result = await db.scalars(select(self.model).filter(self.model.user == user).offset(skip).limit(limit))
+        await db.commit()
+        return result.all()
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: CreateSchemaType) -> AuthModelType:
         obj_in_data = jsonable_encoder(obj_in)
         obj_in_data["user"] = user
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
-        await db.commit()
+        await db.flush()
         await db.refresh(db_obj)
+        await db.commit()
         return db_obj
 
     async def update(
@@ -228,8 +236,9 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         """
         if db_obj.update_bydict(obj_in) > 0:
             try:
-                await db.commit()
+                await db.flush()
                 await db.refresh(db_obj)
+                await db.commit()
             except IntegrityError:
                 await db.rollback()
                 raise HTTPException(
@@ -254,15 +263,15 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         * 403 - if user not own object.
         * 404 - if object absent, and `r404` parameter is True.
         """
-        query = await db.execute(select(self.model.user).filter(self.model.uid == uid))
-        result = query.scalars().first()
+        query = await db.scalars(select(self.model.user).filter(self.model.uid == uid))
+        result = query.first()
         if not result and r404:
             raise HTTPException(status_code=404, detail="Object not found.")
         elif not result:
             return 0
         elif result != user:
             raise HTTPException(status_code=403, detail="Access denied.")
-        query = await db.execute(delete(self.model).where(self.model.uid == uid, self.model.user == user))
+        query2 = await db.execute(delete(self.model).where(self.model.uid == uid, self.model.user == user))
         await db.commit()
-        result = query.rowcount     # type: ignore
+        result = query2.rowcount     # type: ignore
         return int(result)
