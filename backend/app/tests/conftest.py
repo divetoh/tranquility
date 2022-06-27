@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from app.db.base_class import Base
 from app.db.session import engine
 from app.models import User
-from app.tests.utils.users import create_random_user
+from app.tests.utils.users import cr_rand_user
 
 
 @pytest.fixture(scope="session")
@@ -43,11 +43,11 @@ async def cleandb(db) -> None:
 
 @pytest.fixture
 async def superuser(db, cleandb) -> User:
-    user = await create_random_user(db, email="super@test.test", is_superuser=True, password="super")
+    user = await cr_rand_user(db, email="super@test.test", is_superuser=True, password="super")
     return user
 
 
 @pytest.fixture
 async def reguser(db, cleandb) -> User:
-    user = await create_random_user(db, email="regular@test.test", is_superuser=False, password="regular")
+    user = await cr_rand_user(db, email="regular@test.test", is_superuser=False, password="regular")
     return user

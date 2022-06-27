@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app import crud, models, schemas
 from app.core.security import verify_password
 from app.main import app
-from app.tests.utils.users import create_random_user, user_token
+from app.tests.utils.users import cr_rand_user, user_token
 from app.tests.utils.utils import BURL, compare
 
 
@@ -19,9 +19,9 @@ async def test_user_get_multi(db: AsyncSession, superuser: models.User) -> None:
     assert len(all_users) == 1
     compare(schemas.SUser, all_users[0], superuser)
 
-    await create_random_user(db, email="a@nottest.test")
-    await create_random_user(db, is_superuser=True)
-    await create_random_user(db)
+    await cr_rand_user(db, email="a@nottest.test")
+    await cr_rand_user(db, is_superuser=True)
+    await cr_rand_user(db)
 
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(superuser)) as ac:
         r = await ac.get("/users/")
@@ -38,7 +38,7 @@ async def test_user_get_multi_forbiden(db: AsyncSession, reguser: models.User) -
     assert r.status_code == 400
 
     # Inactive
-    user = await create_random_user(db, is_active=False, is_superuser=True)
+    user = await cr_rand_user(db, is_active=False, is_superuser=True)
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(user)) as ac:
         r = await ac.get("/users/")
     assert r.status_code == 400
@@ -89,7 +89,7 @@ async def test_user_create_forbiden(db: AsyncSession, reguser: models.User) -> N
 @pytest.mark.anyio
 async def test_user_create_duplicate(db: AsyncSession, superuser: models.User) -> None:
     # Refuse email duplicates
-    await create_random_user(db, email="test@test.test")
+    await cr_rand_user(db, email="test@test.test")
     user = schemas.SUserCreate(full_name="test", password="test", email="test@test.test")
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(superuser)) as ac:
         r = await ac.post("/users/", json=user.dict())
@@ -126,7 +126,7 @@ async def test_user_get_by_id(db: AsyncSession, reguser: models.User) -> None:
     compare(schemas.SUser, reguser, r.json())
 
     # Other user account
-    user = await create_random_user(db)
+    user = await cr_rand_user(db)
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(reguser)) as ac:
         r = await ac.get(f"/users/{user.uid}")
     assert r.status_code == 403
@@ -148,7 +148,7 @@ async def test_user_get_by_id_super(db: AsyncSession, superuser: models.User) ->
     compare(schemas.SUser, superuser, r.json())
 
     # Other user account
-    user = await create_random_user(db)
+    user = await cr_rand_user(db)
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(superuser)) as ac:
         r = await ac.get(f"/users/{user.uid}")
     assert r.status_code == 200
@@ -165,7 +165,7 @@ async def test_user_get_by_id_super(db: AsyncSession, superuser: models.User) ->
 # TODO: Add coretask, coreactivity update check
 @pytest.mark.anyio
 async def test_user_update_super(db: AsyncSession, superuser: models.User) -> None:
-    user = await create_random_user(db)
+    user = await cr_rand_user(db)
     update = schemas.SUserAdminUpdate(
         full_name="full_name",
         password="password",
@@ -187,7 +187,7 @@ async def test_user_update_super(db: AsyncSession, superuser: models.User) -> No
 
 @pytest.mark.anyio
 async def test_user_update_duplicate(db: AsyncSession, superuser: models.User) -> None:
-    user = await create_random_user(db)
+    user = await cr_rand_user(db)
     update = schemas.SUserAdminUpdate(email=superuser.email)
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(superuser)) as ac:
         r = await ac.put(f"/users/{user.uid}", json=update.dict())
@@ -203,7 +203,7 @@ async def test_user_update_forbiden(db: AsyncSession, reguser: models.User) -> N
 
 @pytest.mark.anyio
 async def test_user_delete(db: AsyncSession, superuser: models.User) -> None:
-    uid = (await create_random_user(db)).uid
+    uid = (await cr_rand_user(db)).uid
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(superuser)) as ac:
         r = await ac.delete(f"/users/{uid}")
     assert r.status_code == 200
@@ -218,7 +218,7 @@ async def test_user_delete(db: AsyncSession, superuser: models.User) -> None:
 
 @pytest.mark.anyio
 async def test_user_delete_forbiden(db: AsyncSession, reguser: models.User) -> None:
-    user = await create_random_user(db)
+    user = await cr_rand_user(db)
     async with AsyncClient(app=app, base_url=BURL, headers=user_token(reguser)) as ac:
         r = await ac.delete(f"/users/{user.uid}")
     assert r.status_code == 400

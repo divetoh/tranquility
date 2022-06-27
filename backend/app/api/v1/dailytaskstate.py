@@ -22,7 +22,6 @@ async def read_dailytaskstate(
     dailytaskstates = await crud.dailytaskstate.get_multi(_db, _user.uid, statedate=statedate)
     if len(dailytaskstates) != 0:
         return dailytaskstates
-    # TODO: Create all states with one query
     result = []
     dailytasks = await crud.dailytask.get_multi(_db, _user.uid, skip=0, limit=1000)
     for dt in dailytasks:

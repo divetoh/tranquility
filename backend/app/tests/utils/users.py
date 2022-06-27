@@ -7,7 +7,7 @@ from app.core.security import create_access_token, get_password_hash
 from app.tests.utils.utils import random_string
 
 
-async def create_random_user(
+async def cr_rand_user(
     db: AsyncSession,
     *,
     email: str = None,

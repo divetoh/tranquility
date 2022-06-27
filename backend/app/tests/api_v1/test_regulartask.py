@@ -5,7 +5,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app import crud, models, schemas
 from app.main import app
-from app.tests.utils.users import create_random_user, user_token
+from app.tests.utils.users import cr_rand_user, user_token
 from app.tests.utils.utils import BURL, compare
 
 
@@ -46,7 +46,7 @@ async def test_regulartask_update(db: AsyncSession, reguser: models.User) -> Non
     assert r.status_code == 404
 
     # Update other user record
-    uid2 = (await create_random_user(db)).uid
+    uid2 = (await cr_rand_user(db)).uid
     rt_uid2 = (await crud.regulartask.create(db, uid2, obj_in=create)).uid
     async with AsyncClient(app=app, base_url=BURL, headers=token) as ac:
         r = await ac.put(f"/regulartask/{rt_uid2}", json=update)
@@ -94,7 +94,7 @@ async def test_regulartask_delete(db: AsyncSession, reguser: models.User) -> Non
     assert r.status_code == 404
 
     # Delete other user record
-    uid2 = (await create_random_user(db)).uid
+    uid2 = (await cr_rand_user(db)).uid
     rt_uid2 = (await crud.regulartask.create(db, uid2, obj_in=create)).uid
     async with AsyncClient(app=app, base_url=BURL, headers=token) as ac:
         r = await ac.delete(f"/regulartask/{rt_uid2}")
