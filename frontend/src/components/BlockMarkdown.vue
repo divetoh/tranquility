@@ -23,16 +23,24 @@
                 label="Markdown name"
                 @update:model-value="setHeader"
               />
-              <q-radio size="sm" dense v-model="headerMode" val="custom" @update:model-value="setHeader">
-                <q-input
-                  dense
-                  v-model="headerCustomText"
-                  outlined
-                  label="Custom header"
-                  @change="setHeader"
-                  debounce="2000"
-                />
-              </q-radio>
+              <q-radio
+                size="sm"
+                dense
+                v-model="headerMode"
+                val="custom"
+                @update:model-value="setHeader"
+                label="Custom"
+              />
+              <q-input
+                dense
+                v-model="headerCustomText"
+                outlined
+                label="Custom header"
+                @change="setHeader"
+                debounce="2000"
+                @keypress.stop
+                v-if="headerMode == 'custom'"
+              />
             </div>
           </div>
         </q-menu>
