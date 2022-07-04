@@ -24,4 +24,4 @@ if [ "$DEMO_USERS" != "0" ]; then
 fi
 
 echo "Starting uvicorn."
-uvicorn app.main:app --reload --workers 5 --host 0.0.0.0 --port 5001
+uvicorn app.main:app --reload --workers 5 --host 0.0.0.0 --port 5001 | tee ./log/uvicorn.log
