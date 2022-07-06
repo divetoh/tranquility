@@ -1,12 +1,13 @@
 version: '3'
 
 services:
-  db-tests:
-    image: mariadb:10.7
+  pgdb-tests:
+    image: postgres:14
+    environment:
+      - POSTGRES_INITDB_ARGS='--encoding=UTF-8'
+      - POSTGRES_SERVER=pgdb-tests
     env_file:
       - .env
-    environment:
-      - MYSQL_SERVER=db-tests
     restart: always
 
   backend:
@@ -15,7 +16,7 @@ services:
     env_file:
       - .env
     environment:
-      - MYSQL_SERVER=db-tests
+      - POSTGRES_SERVER=pgdb-tests
     command: bash -c "./docker.tests.sh"
     depends_on:
-      - db-tests
+      - pgdb-tests

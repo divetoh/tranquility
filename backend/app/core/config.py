@@ -11,15 +11,30 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     FIRST_SUPERUSER: EmailStr
     FIRST_SUPERUSER_PASSWORD: str
+    POSTGRES_USER: str
+    POSTGRES_PASSWORD: str
+    POSTGRES_SERVER: str
+    POSTGRES_DB: str
     MYSQL_USER: str
     MYSQL_PASSWORD: str
     MYSQL_SERVER: str
     MYSQL_DATABASE: str
     SQLALCHEMY_DATABASE_URI: Optional[str] = None
+    SQLALCHEMY_OLDDATABASE_URI: Optional[str] = None
     DEMO_USERS: int = 0
 
     @validator("SQLALCHEMY_DATABASE_URI", pre=True)
     def assemble_db_connection(cls, v: Optional[str], values: dict[str, Any]) -> Any:
+        if isinstance(v, str):
+            return v
+        user = values.get("POSTGRES_USER")
+        password = values.get("POSTGRES_PASSWORD")
+        host = values.get("POSTGRES_SERVER")
+        db = values.get("POSTGRES_DB")
+        return f"postgresql+asyncpg://{user}:{password}@{host}/{db}"
+
+    @validator("SQLALCHEMY_OLDDATABASE_URI", pre=True)
+    def assemble_olddb_connection(cls, v: Optional[str], values: dict[str, Any]) -> Any:
         if isinstance(v, str):
             return v
         user = values.get("MYSQL_USER")

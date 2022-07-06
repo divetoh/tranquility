@@ -14,7 +14,6 @@ Generic parameters:
 
 from typing import Any, Generic, Optional, Type, TypeVar, Union
 from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
 from pydantic import BaseModel
 from sqlalchemy import delete, select
 from sqlalchemy.exc import IntegrityError
@@ -58,7 +57,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         return result.all()
 
     async def create(self, db: AsyncSession, *, obj_in: CreateSchemaType) -> ModelType:
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = obj_in.dict()
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
         await db.flush()
@@ -185,7 +184,7 @@ class CRUDBaseAuth(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType]):
         return result.all()
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: CreateSchemaType) -> AuthModelType:
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = obj_in.dict()
         obj_in_data["user"] = user
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)

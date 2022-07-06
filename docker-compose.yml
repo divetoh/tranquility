@@ -9,6 +9,16 @@ services:
     volumes:
       - ./db:/var/lib/mysql
 
+  pgdb:
+    image: postgres:14
+    environment:
+      - POSTGRES_INITDB_ARGS='--encoding=UTF-8'
+    env_file:
+      - .env
+    restart: always
+    volumes:
+      - ./pgdb:/var/lib/postgresql/data
+
   backend:
     build:
       context: ./backend
@@ -17,6 +27,9 @@ services:
     command: bash -c "./docker.start.sh"
     depends_on:
       - db
+      - pgdb
+    volumes:
+      - ./log:/src/log
 
   frontend:
     build:

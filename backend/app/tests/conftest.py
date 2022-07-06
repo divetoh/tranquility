@@ -37,6 +37,11 @@ async def db(recreate_db) -> AsyncGenerator:
 
 @pytest.fixture
 async def cleandb(db) -> None:
+    # Close transaction, if previous test failed
+    try:
+        await db.commit()
+    except Exception:
+        await db.rollback()
     await db.execute(delete(User))
     await db.commit()
 

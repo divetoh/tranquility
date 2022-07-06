@@ -66,6 +66,8 @@ async def test_daystate_create(db: AsyncSession, reguser: models.User) -> None:
     assert dbdaystate.user == uid
     compare(schemas.SDayStateCreate, dbdaystate, daystate)
     # Try create record with same date
+    del dbdaystate
+    db.expire_all()
     dbdaystate2 = await crud.daystate.create(db, uid, obj_in=daystate)
     assert dbdaystate2 is None
 

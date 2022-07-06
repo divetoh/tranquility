@@ -1,7 +1,6 @@
 from datetime import date
 
 from fastapi import HTTPException
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -36,7 +35,7 @@ class CRUDRegularTaskState():
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: SRegularTaskStateCreate) -> RegularTaskState:
         await crud_regulartask.check_access(db, user, uid=obj_in.regulartask)
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = obj_in.dict()
         db_obj = RegularTaskState(**obj_in_data)
         db.add(db_obj)
         await db.commit()

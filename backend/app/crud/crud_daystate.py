@@ -1,7 +1,6 @@
 from datetime import date
 from typing import Any, Optional, Union
 
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -31,7 +30,7 @@ class CRUDDayState():
         return result.all()
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: SDayStateCreate) -> Optional[DayState]:
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = obj_in.dict()
         db_obj = DayState(**obj_in_data, user=user)
         try:
             db.add(db_obj)

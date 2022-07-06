@@ -5,6 +5,7 @@ from fastapi import HTTPException
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.sql.expression import false
 
 from app.core.config import settings
 from app.core.security import get_password_hash, verify_password
@@ -35,7 +36,7 @@ class CRUDUser(CRUDBase[User, SUserCreate, SUserUpdate]):
         if settings.DEMO_USERS == 0:
             return []
         result = await db.scalars(select(User).filter(
-            User.is_superuser == 0,
+            User.is_superuser == false(),
             User.email.like("%@test.test"),
             User.created_dt < datetime.now() - timedelta(minutes=settings.DEMO_ACCESS_TOKEN_EXPIRE_MINUTES),
         ))

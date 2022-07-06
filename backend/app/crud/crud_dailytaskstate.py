@@ -1,7 +1,6 @@
 from datetime import date
 from typing import Any, Optional, Union
 
-from fastapi.encoders import jsonable_encoder
 from sqlalchemy import delete, literal, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -44,7 +43,7 @@ class CRUDDailyTaskState():
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: SDailyTaskStateCreate) -> DailyTaskState:
         await crud_dailytask.check_access(db, user, uid=obj_in.dailytask)
-        obj_in_data = jsonable_encoder(obj_in)
+        obj_in_data = obj_in.dict()
         db_obj = DailyTaskState(**obj_in_data)
         db.add(db_obj)
         await db.commit()

@@ -31,11 +31,11 @@ target_metadata = Base.metadata
 # ... etc.
 
 def get_url():
-    user = os.getenv("MYSQL_USER", "tranquility")
-    password = os.getenv("MYSQL_PASSWORD", "")
-    server = os.getenv("MYSQL_SERVER", "db")
-    db = os.getenv("MYSQL_DATABASE", "tranquility")
-    return f"mysql+aiomysql://{user}:{password}@{server}:3306/{db}"
+    user = os.getenv("POSTGRES_USER", "tranquility")
+    password = os.getenv("POSTGRES_PASSWORD", "")
+    server = os.getenv("POSTGRES_SERVER", "db")
+    db = os.getenv("POSTGRES_DB", "tranquility")
+    return f"postgresql+asyncpg://{user}:{password}@{server}/{db}"
 
 def run_migrations_offline():
     """Run migrations in 'offline' mode.

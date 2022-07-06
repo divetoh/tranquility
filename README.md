@@ -8,11 +8,13 @@ Web-based Personal Information Manager (PIM). Early development stage.
 ![Screen](/doc/img/screen.jpg)
 
 Tranquility based on:
-1. Database: MariaDB
+1. Database: PostgreSQL
 2. Backend: Python/FastAPI
 3. Frontend: VUE/Quasar
 
 [Install instruction.](/doc/install.md)
+
+[Migration from MariaDB to PostgreSQL instruction.](/doc/migration_to_postgres.md)
 
 ## License
 
