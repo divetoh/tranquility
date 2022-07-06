@@ -15,10 +15,6 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_SERVER: str
     POSTGRES_DB: str
-    MYSQL_USER: str
-    MYSQL_PASSWORD: str
-    MYSQL_SERVER: str
-    MYSQL_DATABASE: str
     SQLALCHEMY_DATABASE_URI: Optional[str] = None
     SQLALCHEMY_OLDDATABASE_URI: Optional[str] = None
     DEMO_USERS: int = 0
@@ -32,16 +28,6 @@ class Settings(BaseSettings):
         host = values.get("POSTGRES_SERVER")
         db = values.get("POSTGRES_DB")
         return f"postgresql+asyncpg://{user}:{password}@{host}/{db}"
-
-    @validator("SQLALCHEMY_OLDDATABASE_URI", pre=True)
-    def assemble_olddb_connection(cls, v: Optional[str], values: dict[str, Any]) -> Any:
-        if isinstance(v, str):
-            return v
-        user = values.get("MYSQL_USER")
-        password = values.get("MYSQL_PASSWORD")
-        host = values.get("MYSQL_SERVER")
-        db = values.get("MYSQL_DATABASE")
-        return f"mysql+aiomysql://{user}:{password}@{host}:3306/{db}"
 
     BACKEND_CORS_ORIGINS: Optional[str]
     BACKEND_CORS_ORIGINS_LIST: Optional[list[AnyHttpUrl]] = None

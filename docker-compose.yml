@@ -1,14 +1,6 @@
 version: '3'
 
 services:
-  db:
-    image: mariadb:10.7
-    env_file:
-      - .env
-    restart: always
-    volumes:
-      - ./db:/var/lib/mysql
-
   pgdb:
     image: postgres:14
     environment:
@@ -26,7 +18,6 @@ services:
       - .env
     command: bash -c "./docker.start.sh"
     depends_on:
-      - db
       - pgdb
     volumes:
       - ./log:/src/log
