@@ -2,10 +2,9 @@
 ## Deployment options
 
 Settings in .env file:
-* MYSQL_SERVER - server IP (should be "db" when using Docker)
-* MYSQL_ROOT_PASSWORD - root password for database (only needed when using Docker)
-* MYSQL_DATABASE - database name
-* MYSQL_USER, MYSQL_PASSWORD - database access credentials
+* POSTGRES_USER, POSTGRES_PASSWORD - database access credentials
+* POSTGRES_DB - database name
+* POSTGRES_SERVER - server IP (should be "pgdb" when using Docker)
 * BACKEND_CORS_ORIGINS - comma separated IP address for CORS (needed if frontend and backend have different origin)
 * SECRET_KEY - random string to encrypt JWT token
 * FIRST_SUPERUSER - first user email
@@ -32,24 +31,14 @@ To run tests in docker use:
 Example for Debian/Ubuntu linux.
 
 #### 1. Configure database
-Install and configure MariaDB:
+Install and configure PostgreSQL:
 ```
-sudo apt install mariadb-server mariadb-client
-sudo mysql_secure_installation
-> Set root password? [Y/n] N
-> Remove anonymous users? [Y/n] Y
-> Disallow root login remotely? [Y/n] Y
-> Remove test database and access to it? [Y/n] Y
-> Reload privilege tables now? [Y/n] Y
-```
-Create SQL database and user:
-```
-sudo mariadb
-MariaDB [(none)]> CREATE DATABASE tr_db;
-MariaDB [(none)]> CREATE USER tr_user@localhost IDENTIFIED BY 'tr_password';
-MariaDB [(none)]> GRANT ALL PRIVILEGES ON tr_db.* TO tr_user@localhost;
-MariaDB [(none)]> FLUSH PRIVILEGES;
-MariaDB [(none)]> QUIT;
+sudo apt install postgresql
+sudo -u postgres psql
+CREATE USER tr_user WITH PASSWORD 'tr_password';
+CREATE DATABASE tr_db ENCODING='utf8' TEMPLATE template0;
+GRANT ALL PRIVILEGES ON DATABASE tr_db TO tr_user;
+EXIT
 ```
 
 #### 2. Configure Tranquility
@@ -64,11 +53,10 @@ sudo nano .env.local
 ```
  Example .env.local:
 ```
-MYSQL_PASSWORD=tr_password
-MYSQL_ROOT_PASSWORD=
-MYSQL_DATABASE=tr_db
-MYSQL_USER=tr_user
-MYSQL_SERVER=localhost
+POSTGRES_PASSWORD=tr_password
+POSTGRES_DB=tr_db
+POSTGRES_USER=tr_user
+POSTGRES_SERVER=localhost
 BACKEND_CORS_ORIGINS=
 SECRET_KEY=MY_RANDOM_SUPER_SECRET_KEY_123456
 FIRST_SUPERUSER=admin@test.test

@@ -32,9 +32,9 @@ git checkout tags/v0.1.06-premigrate
 cd backend
 ./local.alembic_upgrade.sh
 ```
-2. Install PostgreSQL, ocnfigure database and user:
+2. Install PostgreSQL, configure database and user:
 ```
-apt install postgresql
+sudo apt install postgresql
 sudo -u postgres psql
 CREATE USER tr_user WITH PASSWORD 'tr_password';
 CREATE DATABASE tr_db ENCODING='utf8' TEMPLATE template0;
