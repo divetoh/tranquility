@@ -5,9 +5,16 @@
         <span v-if="headerMode == 'custom'">{{ headerCustomText }}</span>
         <span v-if="headerMode == 'markdown'">{{ markdown_name }}</span>
       </div>
-      <q-btn dense flat v-on:click="edit" icon="edit" size="xs">
+      <q-btn dense flat @click="setFolded(true)" icon="unfold_less" size="xs" v-if="!folded">
+        <q-tooltip :delay="550" anchor="top middle" self="center middle"> Fold block </q-tooltip>
+      </q-btn>
+      <q-btn dense flat @click="setFolded(false)" icon="unfold_more" size="xs" v-if="folded">
+        <q-tooltip :delay="550" anchor="top middle" self="center middle"> Unfold block </q-tooltip>
+      </q-btn>
+      <q-btn dense flat @click="edit" icon="edit" size="xs">
         <q-tooltip :delay="550" anchor="top middle" self="center middle"> Edit block </q-tooltip>
       </q-btn>
+      <!-- Settings menu-->
       <q-btn dense flat icon="settings">
         <q-tooltip :delay="550" anchor="top middle" self="center middle"> Customize block </q-tooltip>
         <q-menu>
@@ -45,15 +52,20 @@
           </div>
         </q-menu>
       </q-btn>
-      <q-btn dense flat v-on:click="delBlock" icon="delete" size="xs" v-if="actions.delblock">
+      <q-btn dense flat @click="delBlock" icon="delete" size="xs" v-if="actions.delblock">
         <q-tooltip :delay="550" anchor="top middle" self="center middle"> Delete block </q-tooltip>
       </q-btn>
     </q-bar>
-    <q-card-section class="text-left q-py-sm q-px-md" style="user-select: text">
+    <q-card-section class="text-left q-py-sm q-px-md" style="user-select: text" v-if="!folded">
       <q-card-section class="text-center" v-if="markdown === undefined">
         Loading... <q-spinner-rings color="grey" size="md" />
       </q-card-section>
       <div v-html="markdown_fmt" v-else @dblclick="edit" />
+    </q-card-section>
+    <q-card-section class="text-center q-py-none q-px-none" style="user-select: text" v-else>
+      <q-btn dense flat @click="setFolded(false)" icon="more_horiz" size="xs" style="width: 100%" v-if="folded">
+        <q-tooltip :delay="550" anchor="top middle" self="center middle"> Unfold block </q-tooltip>
+      </q-btn>
     </q-card-section>
   </q-card>
 </template>
@@ -66,10 +78,11 @@ import DEditMarkdown from "@/components/dialog/DEditMarkdown";
 
 export default {
   name: "BlockMarkdown",
-  emits: ["delBlock", "setHeader"],
+  emits: ["delBlock", "setHeader", "setFolded"],
   props: ["block", "actions"],
   created: async function () {
     this.headerCustomText = this.block.headerCustomText || "Header";
+    this.folded = this.block.folded || false;
     this.headerMode = this.block.headerMode || "none";
 
     marked.setOptions({
@@ -84,6 +97,7 @@ export default {
       showMoveArrow: false,
       headerCustomText: "",
       headerMode: "",
+      folded: false,
     };
   },
   computed: mapState({
@@ -101,6 +115,10 @@ export default {
   methods: {
     async setHeader() {
       this.$emit("setHeader", this.headerMode, this.headerCustomText);
+    },
+    async setFolded(folded) {
+      this.folded = folded;
+      this.$emit("setFolded", this.folded);
     },
     async delBlock() {
       this.$q

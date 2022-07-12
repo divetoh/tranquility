@@ -13,6 +13,7 @@
       :actions="actions"
       @delBlock="delBlock"
       @setHeader="setHeader"
+      @setFolded="setFolded"
     />
     <TaskList v-if="block.type == 'tasklist'" :uid="block.uid" :actions="actions" @delBlock="delBlock" />
     <TaskList v-if="block.type == 'coretasklist'" :actions="actions" @delBlock="delBlock" />
@@ -75,6 +76,14 @@ export default {
         row: this.row,
         col: this.col,
         props: { headerMode: mode, headerCustomText: text },
+      });
+    },
+    async setFolded(folded) {
+      this.$store.dispatch("aWorkspaceSetBlockProps", {
+        workspace: this.workspace,
+        row: this.row,
+        col: this.col,
+        props: { folded },
       });
     },
   },
