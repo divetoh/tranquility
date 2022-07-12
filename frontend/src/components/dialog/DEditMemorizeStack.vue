@@ -14,6 +14,15 @@
         <q-list class="col-grow col-shrink scroll6" style="overflow: auto; width: 100%; flex: 1">
           <template v-for="c in stackcard" :key="c">
             <q-item :active="selected == c" @click="selectCard(card[c].uid)" clickable v-ripple dense>
+              <q-item-section side>
+                <div
+                  :style="'display: block; width: 24px; background-color:' + categorys[card[c].category].hex"
+                  v-if="card[c].category"
+                >
+                  &nbsp;
+                </div>
+                <div style="display: block; width: 24px; border: solid white 1px" v-else>&nbsp;</div>
+              </q-item-section>
               <q-item-section>
                 {{ card[c].name }}
               </q-item-section>
@@ -338,6 +347,9 @@ export default {
         if (!stack_list.includes(stack.section)) stack_list.push(stack.section);
       }
       return stack_list;
+    },
+    categorys: function (state) {
+      return state.memorize.category;
     },
     categoryList: function (state) {
       var category = [];
