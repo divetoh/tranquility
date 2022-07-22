@@ -6,7 +6,15 @@
         <q-btn color="blue" flat dense round v-on:click="done" icon="done" size="sm" v-if="is_coretasklist">
           <q-tooltip :delay="550" anchor="top middle" self="center middle">Complete task</q-tooltip>
         </q-btn>
-        <q-btn color="blue" flat dense round v-on:click="deleteTask" icon="delete" size="sm">
+        <q-btn
+          color="blue"
+          flat
+          dense
+          round
+          v-on:click="deleteTask"
+          :icon="tasklistline.type == 'dailytask' || tasklistline.type == 'regulartask' ? 'playlist_remove' : 'delete'"
+          size="sm"
+        >
           <q-tooltip :delay="550" anchor="top middle" self="center middle">Delete task</q-tooltip>
         </q-btn>
       </div>
