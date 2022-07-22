@@ -37,7 +37,18 @@
                       <q-btn dense flat round size="sm" icon="delete" color="red" @click="delete_dailytask(t)" />
                     </q-btn-group>
                   </td>
-                  <td>{{ dailytask[t].name }}</td>
+                  <td>
+                    {{ dailytask[t].name }}
+                    <q-popup-edit
+                      buttons
+                      lazy-rule
+                      @save="(val) => setDailyTaskName(val, t)"
+                      v-slot="scope"
+                      v-model="dailytask[t].name"
+                    >
+                      <q-input v-model="scope.value" dense autofocus counter @keyup.enter="scope.set" />
+                    </q-popup-edit>
+                  </td>
                 </tr>
               </template>
             </tbody>
@@ -84,7 +95,9 @@ export default {
     onCancelClick() {
       this.hide();
     },
-    async edit_dailytask() {},
+    async setDailyTaskName(name, uid) {
+      this.$store.dispatch("aDailytaskUpdate", { uid, data: { name } });
+    },
     async enable_dailytask(uid) {
       this.$store.dispatch("aDailytaskUpdate", { uid, data: { is_active: true } });
     },
