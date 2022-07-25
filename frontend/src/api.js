@@ -86,4 +86,7 @@ export const api = {
     var param = authHeaders();
     return axios.get(`${apiUrl}/api/v1/memorize/stack/statistics`, param);
   },
+  async getMemorizeCardHistory(uid) {
+    return axios.get(`${apiUrl}/api/v1/memorize/card/${uid}/history`, authHeaders());
+  },
 };

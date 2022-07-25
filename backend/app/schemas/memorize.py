@@ -110,6 +110,13 @@ class SMemorizeCardUpdate(BaseModel):
     hint: Optional[str]
 
 
+class SMemorizeCardOutHistory(BaseModel):
+    """ Memory Card History Response """
+    history: list[tuple[datetime, int]]
+    attempts: int
+    correct: int
+
+
 class SMemorizeAnswerIn(BaseModel):
     """ MemorizeCard answered """
     state: int

@@ -34,6 +34,18 @@ async def read_memorizecard_by_id(
     return await crud.memorizecard.get(_db, _user.uid, uid=uid, r404=True)
 
 
+@router.get("/{uid}/history", response_model=schemas.SMemorizeCardOutHistory, responses=resp.C34)
+async def read_memorizecardhistory_by_id(
+    uid: int,
+    _db: AsyncSession = Depends(deps.get_db),
+    _user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Return Memorize Card History.
+    """
+    return await crud.memorizecardhistory.get_histroy(_db, _user.uid, card=uid)
+
+
 @router.put("/{uid}", response_model=schemas.SBoolOut, responses=resp.C34)
 async def update_memorizecard(
     uid: int,

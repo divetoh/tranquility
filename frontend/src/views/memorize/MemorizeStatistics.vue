@@ -68,8 +68,7 @@ export default {
     },
     stack: (state) => state.memorize.stack,
   }),
-  methods: {
-  },
+  methods: {},
 };
 </script>
 

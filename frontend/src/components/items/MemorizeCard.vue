@@ -3,12 +3,13 @@
     <div class="card_content_wrapper" :class="state">
       <div>
         <template v-if="cardState">
-          <q-badge class="q-px-xs q-ma-xs">
+          <q-badge class="q-px-xs q-ma-xs" @click.stop="showHistory">
             {{ cardState.state }}
             <q-tooltip :offset="[10, 10]" class="text-body2">
               Right answers count: {{ cardState.state }} <br />
               Last answer date: {{ cardState.lastdate }} <br />
-              Next recomended date: {{ cardState.nextdate }} <br />
+              Next recomended date: {{ cardState.nextdate }} <br /><br />
+              Click to show history...
             </q-tooltip>
           </q-badge>
           <q-badge
@@ -75,7 +76,7 @@
 <script>
 import { mapState } from "vuex";
 import { Dialog } from "quasar";
-import DMemorizeTest from "@/components/dialog/DMemorizeTest";
+import DMemorizeCardHistory from "@/components/dialog/DMemorizeCardHistory";
 import marked from "marked";
 
 export default {
@@ -106,14 +107,11 @@ export default {
     async setSection(section) {
       this.section = section;
     },
-    async testStack(stack) {
+    async showHistory() {
       Dialog.create({
-        component: DMemorizeTest,
+        component: DMemorizeCardHistory,
         componentProps: {
-          test: {
-            mode: "fullstack",
-            stack,
-          },
+          uid: this.uid,
         },
       });
     },
