@@ -82,4 +82,8 @@ export const api = {
     param.responseType = "blob";
     return axios.get(`${apiUrl}/api/v1/archive/full_json`, param);
   },
+  async getMemorizeStackStatistics() {
+    var param = authHeaders();
+    return axios.get(`${apiUrl}/api/v1/memorize/stack/statistics`, param);
+  },
 };

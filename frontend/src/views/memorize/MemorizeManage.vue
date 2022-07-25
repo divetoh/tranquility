@@ -1,7 +1,7 @@
 <template>
   <div class="column" style="height: 100%; owerflow: auto">
-    <div style="text-align: left">
-      <q-card class="q-pa-md">
+    <q-card class="q-pa-md">
+      <div style="text-align: left">
         <q-markup-table dense bordered class="text-left">
           <thead class="bg-indigo-3">
             <tr>
@@ -34,8 +34,8 @@
           <q-btn icon="add" label="Add" no-caps class="q-px-md" @click="addStack" size="md" dense />
           <q-btn icon="class" label="Edit category" no-caps class="q-px-md" @click="editCategory" size="md" dense />
         </q-btn-group>
-      </q-card>
-    </div>
+      </div>
+    </q-card>
   </div>
 </template>
 

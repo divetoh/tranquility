@@ -20,6 +20,17 @@ async def read_memorizestacks(
     return await crud.memorizestack.get_multi(_db, _user.uid)
 
 
+@router.get("/statistics", response_model=list)
+async def read_memorizestacks_statistics(
+    _db: AsyncSession = Depends(deps.get_db),
+    _user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Return Memorize Stack Statistics.
+    """
+    return await crud.memorizestack.get_stat(_db, _user.uid)
+
+
 @router.get("/{uid}", response_model=schemas.SMemorizeStackOut, responses=resp.C34)
 async def read_memorizestack_by_id(
     uid: int,
