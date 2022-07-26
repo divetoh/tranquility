@@ -81,6 +81,7 @@ import marked from "marked";
 
 export default {
   name: "MemorizeLearn",
+  expose: ["show", "uid"],
   data: function () {
     return {
       showCard: false,
@@ -114,6 +115,9 @@ export default {
           uid: this.uid,
         },
       });
+    },
+    show() {
+      this.showCard = true;
     },
   },
   computed: mapState({

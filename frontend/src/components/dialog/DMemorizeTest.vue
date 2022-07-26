@@ -11,6 +11,7 @@
             v-for="card in cards"
             :key="card"
             :uid="card"
+            ref="card"
             state="unanswered"
             :preview="preview"
             @correct="goodAnswer(card)"
@@ -114,6 +115,7 @@ export default {
       const index2 = this.untimely.indexOf(uid);
       if (index2 !== -1) this.untimely.splice(index2, 1);
       this.correct.push(uid);
+      this.showNext(index);
     },
     badAnswer(uid) {
       const index = this.cards.indexOf(uid);
@@ -121,6 +123,15 @@ export default {
       const index2 = this.untimely.indexOf(uid);
       if (index2 !== -1) this.untimely.splice(index2, 1);
       this.incorrect.push(uid);
+      this.showNext(index);
+    },
+    showNext(index = 0) {
+      if (this.cards.length == 0) return;
+      if (index > this.cards.length - 1) index = this.cards.length - 1;
+      const uid = this.cards[index];
+      for (const c in this.$refs.card) {
+        if (this.$refs.card[c].$props.uid == uid) this.$refs.card[c].show();
+      }
     },
   },
 };
