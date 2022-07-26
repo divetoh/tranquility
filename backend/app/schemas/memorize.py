@@ -31,6 +31,13 @@ class SMemorizeStackUpdate(BaseModel):
     description: Optional[str]
 
 
+class SMemorizeStackReadyCount(BaseModel):
+    """ Memory Card Stack Request for update """
+    cards: int
+    untimely: int
+    ready: int
+
+
 class SMemorizeCategoryOut(BaseModel):
     """ Memory Card Category Response """
     uid: int

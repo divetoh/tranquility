@@ -1,3 +1,4 @@
+from datetime import date
 from typing import Any
 
 from fastapi import APIRouter, Depends
@@ -18,6 +19,18 @@ async def read_memorizestacks(
     Return all Memorize Stacks.
     """
     return await crud.memorizestack.get_multi(_db, _user.uid)
+
+
+@router.get("/readycount/{dt}", response_model=dict[int, schemas.SMemorizeStackReadyCount])
+async def read_readycount(
+    dt: date,
+    _db: AsyncSession = Depends(deps.get_db),
+    _user: models.User = Depends(deps.get_current_active_user),
+) -> Any:
+    """
+    Return count of Cards redy for answer for date. Grouped by stack.
+    """
+    return await crud.memorizestack.get_readycount(_db, _user.uid, dt)
 
 
 @router.get("/statistics", response_model=list)

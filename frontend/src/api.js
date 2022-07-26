@@ -89,4 +89,7 @@ export const api = {
   async getMemorizeCardHistory(uid) {
     return axios.get(`${apiUrl}/api/v1/memorize/card/${uid}/history`, authHeaders());
   },
+  async getMemorizeStackReadyCount(dt) {
+    return axios.get(`${apiUrl}/api/v1/memorize/stack/readycount/${dt}`, authHeaders());
+  },
 };
