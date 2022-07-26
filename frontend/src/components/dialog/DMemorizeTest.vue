@@ -104,7 +104,9 @@ export default {
     hide() {
       this.$refs.dialogEditRTRef.hide();
     },
-    onDialogHide() {},
+    onDialogHide() {
+      this.$emit("ok");
+    },
     onOKClick() {
       this.$emit("ok");
       this.hide();

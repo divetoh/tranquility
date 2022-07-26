@@ -77,8 +77,7 @@ export default {
   },
   components: {},
   created: async function () {
-    const response = await api.getMemorizeStackReadyCount(this.$store.state.current.date);
-    this.ready = response.data;
+    this.ready = (await api.getMemorizeStackReadyCount(this.$store.state.current.date)).data;
   },
   methods: {
     async setSection(section) {
@@ -93,6 +92,8 @@ export default {
             stack,
           },
         },
+      }).onOk(() => {
+        api.getMemorizeStackReadyCount(this.$store.state.current.date).then((result) => (this.ready = result.data));
       });
     },
   },
