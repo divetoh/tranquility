@@ -12,4 +12,18 @@ app.config.globalProperties.$dragState = {
   objectType: "",
   object: {},
 };
+app.config.globalProperties.$monthNames = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 app.mount("#app");
