@@ -21,10 +21,15 @@
                 >
                   &nbsp;
                 </div>
-                <div style="display: block; width: 24px; border: solid white 1px" v-else>&nbsp;</div>
+                <div style="text-align: center; display: block; width: 24px; border: solid white 1px" v-else>
+                  &nbsp;
+                </div>
               </q-item-section>
-              <q-item-section>
-                {{ card[c].name }}
+              <q-item-section lines="1">
+                <q-item-label>
+                  <q-icon name="disabled_visible" size="xs" class="q-mr-sm" v-if="!card[c].is_active" />
+                  {{ card[c].name }}
+                </q-item-label>
               </q-item-section>
             </q-item>
           </template>
@@ -338,6 +343,11 @@ export default {
       for (var i in state.memorize.card) {
         if (state.memorize.card[i].stack == this.uid) cards.push(i);
       }
+      cards.sort(function (a, b) {
+        if (state.memorize.card[a].name < state.memorize.card[b].name) return -1;
+        if (state.memorize.card[a].name > state.memorize.card[b].name) return 1;
+        return 0;
+      });
       return cards;
     },
     stackList: function (state) {
