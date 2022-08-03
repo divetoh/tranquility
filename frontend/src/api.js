@@ -43,10 +43,20 @@ class APIBase {
   }
 }
 
-var memorize_card = new APIBase("memorize/card");
+const memorize_card = new APIBase("memorize/card");
 memorize_card.answer = async function (uid, data, url_param) {
   const param = url_param == undefined ? "" : make_URL_param(url_param);
   return axios.post(this.path + uid + "/answer" + param, data, authHeaders());
+};
+
+const memorize_category = new APIBase("memorize/category");
+memorize_category.get_cards = async function (uid, url_param) {
+  const param = url_param == undefined ? "" : make_URL_param(url_param);
+  return axios.get(this.path + uid + "/cards" + param, authHeaders());
+};
+memorize_category.ready_count = async function (dt, url_param) {
+  const param = url_param == undefined ? "" : make_URL_param(url_param);
+  return axios.get(this.path + "readycount/" + dt + param, authHeaders());
 };
 
 export const api = {
@@ -58,9 +68,9 @@ export const api = {
   daystate: new APIBase("daystate"),
   regulartaskstate: new APIBase("regulartaskstate"),
   dailytaskstate: new APIBase("dailytaskstate"),
-  memorize_card: memorize_card,
+  memorize_card,
+  memorize_category,
   memorize_stack: new APIBase("memorize/stack"),
-  memorize_category: new APIBase("memorize/category"),
 
   async logInGetToken(username, password) {
     const params = new URLSearchParams();

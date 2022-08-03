@@ -10,7 +10,7 @@ from .memorize import (SMemorizeAnswerIn, SMemorizeAnswerOut,
                        SMemorizeCardUpdate, SMemorizeCategoryCreate,
                        SMemorizeCategoryOut, SMemorizeCategoryUpdate,
                        SMemorizeHistoryOut, SMemorizeStackCreate,
-                       SMemorizeStackOut, SMemorizeStackReadyCount,
+                       SMemorizeStackOut, SMemorizeCardsReadyCount,
                        SMemorizeStackUpdate, SMemorizeStateCreate)
 from .msg import SBoolOut, SMsgOut
 from .regulartask import (SRegularTaskCreate, SRegularTaskOut,

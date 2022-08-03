@@ -31,8 +31,8 @@ class SMemorizeStackUpdate(BaseModel):
     description: Optional[str]
 
 
-class SMemorizeStackReadyCount(BaseModel):
-    """ Memory Card Stack Request for update """
+class SMemorizeCardsReadyCount(BaseModel):
+    """ Memory Card counted by answered/ready """
     cards: int
     untimely: int
     ready: int

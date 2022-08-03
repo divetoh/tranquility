@@ -81,20 +81,24 @@ export default {
     MemorizeCard,
   },
   created: async function () {
+    const cur_date = this.$store.state.current.date;
+    var all_cards = [];
     if (this.test.mode == "fullstack") {
-      const all_cards = await this.$store.dispatch("aMemorizeCardLoadByStack", { stack: this.test.stack });
-      const cur_date = this.$store.state.current.date;
-      for (var i of all_cards) {
-        const card = this.$store.state.memorize.card[i];
-        if (card.is_active) {
-          if (card.state_r[0] && card.state_r[0].nextdate > cur_date) this.untimely.push(i);
-          else this.cards.push(i);
-        }
-      }
-      // Simple shuffle
-      this.cards.sort(() => Math.random() - 0.5);
-      this.untimely.sort(() => Math.random() - 0.5);
+      all_cards = await this.$store.dispatch("aMemorizeCardLoadByStack", { stack: this.test.stack });
     }
+    if (this.test.mode == "fullcategory") {
+      all_cards = await this.$store.dispatch("aMemorizeCardLoadByCategory", { category: this.test.category });
+    }
+    for (var i of all_cards) {
+      const card = this.$store.state.memorize.card[i];
+      if (card.is_active) {
+        if (card.state_r[0] && card.state_r[0].nextdate > cur_date) this.untimely.push(i);
+        else this.cards.push(i);
+      }
+    }
+    // Simple shuffle
+    this.cards.sort(() => Math.random() - 0.5);
+    this.untimely.sort(() => Math.random() - 0.5);
   },
   methods: {
     // Dialog

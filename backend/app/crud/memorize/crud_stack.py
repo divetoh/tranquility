@@ -52,7 +52,7 @@ class CRUDMemorizeStack(CRUDBaseAuth[MemorizeStack, schemas.SMemorizeStackCreate
         db: AsyncSession,
         user: int,
         dt: date,
-    ) -> dict[int, schemas.SMemorizeStackReadyCount]:
+    ) -> dict[int, schemas.SMemorizeCardsReadyCount]:
         out = {}
 
         # Cards, that don't need check (for dt date).
@@ -65,7 +65,7 @@ class CRUDMemorizeStack(CRUDBaseAuth[MemorizeStack, schemas.SMemorizeStackCreate
         result = await db.execute(q)
 
         for i in result.all():
-            out[i[0]] = schemas.SMemorizeStackReadyCount(
+            out[i[0]] = schemas.SMemorizeCardsReadyCount(
                 cards=i[1],
                 untimely=i[2],
                 ready=i[1] - i[2],

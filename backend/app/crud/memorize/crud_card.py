@@ -4,7 +4,7 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import contains_eager, selectinload
+from sqlalchemy.orm import contains_eager, selectinload, joinedload
 
 from app import schemas
 from app.models import MemorizeCard, MemorizeCategory, MemorizeStack
@@ -19,7 +19,7 @@ class CRUDMemorizeCard():
         user: int,
         *,
         skip: int = 0,
-        limit: int = 100,
+        limit: int = 1000,
         stack: Optional[int] = None,
     ) -> list[MemorizeCard]:
         query = select(MemorizeCard).join(MemorizeCard.stack_r).\
@@ -27,6 +27,24 @@ class CRUDMemorizeCard():
         if stack is not None:
             query = query.filter(MemorizeCard.stack == stack)
         result = await db.execute(query.filter(MemorizeStack.user == user).offset(skip).limit(limit))
+        return result.unique().scalars().all()
+
+    async def get_by_category(
+        self,
+        db: AsyncSession,
+        user: int,
+        *,
+        skip: int = 0,
+        limit: int = 1000,
+        category: int,
+    ) -> list[MemorizeCard]:
+        query = select(MemorizeCard).\
+            options(joinedload('state_r')).\
+            join(MemorizeCard.stack_r).\
+            where(MemorizeCard.category == category).\
+            where(MemorizeStack.user == user).\
+            offset(skip).limit(limit)
+        result = await db.execute(query)
         return result.unique().scalars().all()
 
     async def get(self, db: AsyncSession, user: int, *, uid: Any, r404: bool = False) -> Optional[MemorizeCard]:

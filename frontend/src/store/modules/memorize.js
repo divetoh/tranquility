@@ -65,6 +65,13 @@ export default {
       for (var x of response.data) cards.push(x.uid);
       return cards;
     },
+    async aMemorizeCardLoadByCategory({ commit }, { category }) {
+      const response = await api.memorize_category.get_cards(category);
+      if (response.data) commit("memorizeCardUpdate", response.data);
+      var cards = [];
+      for (var x of response.data) cards.push(x.uid);
+      return cards;
+    },
     async aMemorizeCardUpdate({ commit }, { uid, data }) {
       const response = await api.memorize_card.update(uid, data);
       if (response.data) commit("memorizeCardUpdateData", { uid, data });

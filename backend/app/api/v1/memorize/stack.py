@@ -21,7 +21,7 @@ async def read_memorizestacks(
     return await crud.memorizestack.get_multi(_db, _user.uid)
 
 
-@router.get("/readycount/{dt}", response_model=dict[int, schemas.SMemorizeStackReadyCount])
+@router.get("/readycount/{dt}", response_model=dict[int, schemas.SMemorizeCardsReadyCount])
 async def read_readycount(
     dt: date,
     _db: AsyncSession = Depends(deps.get_db),
