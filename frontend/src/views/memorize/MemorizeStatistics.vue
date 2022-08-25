@@ -32,6 +32,16 @@
                 </td>
               </tr>
             </template>
+            <tr class="bg-grey-3">
+              <td><b>Total</b></td>
+              <td>&nbsp;</td>
+              <td>{{ total.count }}</td>
+              <td>{{ total.unanswered }}</td>
+              <td class="bl" v-for="(val, idx) in total.correct" :key="idx">
+                <span v-if="val == 0">&nbsp;</span>
+                <span v-else>{{ val }}</span>
+              </td>
+            </tr>
           </tbody>
         </q-markup-table>
       </div>
@@ -49,6 +59,12 @@ export default {
   created: async function () {
     const stat = await api.getMemorizeStackStatistics();
     this.stat = stat.data;
+    this.total = { count: 0, unanswered: 0, correct: new Array(10).fill(0) };
+    for (const i of this.stat) {
+      this.total.count += i.count;
+      this.total.unanswered += i.unanswered;
+      for (const j in i.correct) this.total.correct[j] += i.correct[j];
+    }
     this.loading = false;
   },
   data: function () {
