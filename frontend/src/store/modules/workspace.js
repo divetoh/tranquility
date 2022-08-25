@@ -104,6 +104,16 @@ export default {
       commit("workspaceSetName", { workspace, name });
       await dispatch("aWorkspaceSave", workspace);
     },
+    async aCrossWorkspaceBlockMove({ commit, dispatch }, payload) {
+      commit("crossWorkspaceBlockMove", payload);
+      await dispatch("aWorkspaceSave", payload.workspace);
+      await dispatch("aWorkspaceSave", payload.to_workspace);
+    },
+    async aCrossWorkspaceColumnMove({ commit, dispatch }, payload) {
+      commit("crossWorkspaceColumnMove", payload);
+      await dispatch("aWorkspaceSave", payload.workspace);
+      await dispatch("aWorkspaceSave", payload.to_workspace);
+    },
     async aWorkspaceDelete({ commit }, { workspace }) {
       const response = await api.jsondoc.delete(workspace);
       if (response.data.state) commit("workspaceDelete", workspace);
@@ -149,6 +159,14 @@ export default {
       if (to_col <= from_col) from_col += 1;
       cnt.splice(from_col, 1);
     },
+    crossWorkspaceColumnMove(state, { workspace, from_col, to_workspace }) {
+      var from_cnt = state.workspace_lst[workspace].workspace.content;
+      var to_cnt = state.workspace_lst[to_workspace].workspace.content;
+      if (from_cnt[from_col] == undefined) return;
+      const col = from_cnt[from_col];
+      to_cnt.splice(0, 0, col);
+      from_cnt.splice(from_col, 1);
+    },
     workspaceColumnDelete(state, { workspace, index }) {
       state.workspace_lst[workspace].workspace.content.splice(index, 1);
     },
@@ -164,6 +182,15 @@ export default {
       cnt[to_col].content.splice(to_row, 0, block);
       if (to_col == from_col && to_row <= from_row) from_row += 1;
       cnt[from_col].content.splice(from_row, 1);
+    },
+    crossWorkspaceBlockMove(state, { workspace, from_row, from_col, to_workspace }) {
+      var from_cnt = state.workspace_lst[workspace].workspace.content;
+      var to_cnt = state.workspace_lst[to_workspace].workspace.content;
+      if (from_cnt[from_col] == undefined || from_cnt[from_col].content[from_row] == undefined) return;
+      const block = from_cnt[from_col].content[from_row];
+      if (to_cnt.length == 0) to_cnt.push({ name: "New column", content: [] });
+      to_cnt[0].content.push(block);
+      from_cnt[from_col].content.splice(from_row, 1);
     },
     workspaceSetColumnName(state, { workspace, name, index }) {
       state.workspace_lst[workspace].workspace.content[index].name = name;
