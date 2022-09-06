@@ -4,10 +4,10 @@ from sqlalchemy.dialects.postgresql import JSONB
 from app.db.base_class import Base, MixinUser
 
 
-class JSONDoc(Base, MixinUser):
+class Folder(Base, MixinUser):
     uid: int = Column(Integer, primary_key=True, index=True)
     user: int = Column(Integer, ForeignKey("user.uid", ondelete="CASCADE"), nullable=False, index=True)
-    folder: int = Column(Integer, ForeignKey("folder.uid", ondelete="CASCADE"), nullable=True, index=True)
-    doctype: str = Column(String(20), nullable=False)
-    name: str = Column(String(80), nullable=False)
-    jsondoc: str = Column(JSONB, nullable=False)
+    parent: int = Column(Integer, ForeignKey("folder.uid", ondelete="CASCADE"), nullable=True, index=True)
+    name: str = Column(String(255), nullable=False)
+    foldertype: int = Column(Integer, nullable=False, default=1)
+
