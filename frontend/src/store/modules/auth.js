@@ -32,6 +32,7 @@ export default {
             commit("setLoggedIn", true);
             commit("setUserProfile", response.data);
             await dispatch("aCurrentSetActivity", response.data.coreactivity);
+            await dispatch("aFolderLoadAll");
           } catch (error) {
             await dispatch("aRemoveLogIn");
           }

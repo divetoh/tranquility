@@ -9,6 +9,7 @@ class SJSONDocOut(BaseModel):
     doctype: str
     name: str
     jsondoc: str
+    folder: int
 
     class Config:
         orm_mode = True

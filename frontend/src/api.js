@@ -59,6 +59,12 @@ memorize_category.ready_count = async function (dt, url_param) {
   return axios.get(this.path + "readycount/" + dt + param, authHeaders());
 };
 
+const folder = new APIBase("folder");
+folder.get_content = async function (uid, url_param) {
+  const param = url_param == undefined ? "" : make_URL_param(url_param);
+  return axios.get(`${this.path}${uid}/content${param}`, authHeaders());
+};
+
 export const api = {
   user: new APIBase("users"),
   markdown: new APIBase("markdown"),
@@ -68,6 +74,7 @@ export const api = {
   daystate: new APIBase("daystate"),
   regulartaskstate: new APIBase("regulartaskstate"),
   dailytaskstate: new APIBase("dailytaskstate"),
+  folder,
   memorize_card,
   memorize_category,
   memorize_stack: new APIBase("memorize/stack"),

@@ -20,6 +20,11 @@ const routes = [
         component: () => import("../views/Workspace.vue"),
       },
       {
+        path: "ol",
+        name: "ol",
+        component: () => import("../views/outliner/Outliner.vue"),
+      },
+      {
         path: "planing/:p_section",
         name: "planing",
         component: () => import("../views/Planing.vue"),

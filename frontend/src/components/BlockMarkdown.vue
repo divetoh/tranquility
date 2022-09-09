@@ -72,8 +72,8 @@
 
 <script>
 import { mapState } from "vuex";
-import marked from "marked";
 import { Dialog } from "quasar";
+import marked from "marked";
 import DEditMarkdown from "@/components/dialog/DEditMarkdown";
 
 export default {

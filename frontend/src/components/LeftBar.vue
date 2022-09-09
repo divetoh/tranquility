@@ -26,6 +26,18 @@
 
     <q-item
       clickable
+      :active="this.$route.name == 'ol'"
+      @click="this.$router.push('/ol/')"
+      active-class="act-menu-link"
+    >
+      <q-item-section avatar>
+        <q-icon name="menu_book"></q-icon>
+      </q-item-section>
+      <q-item-section color="white" class="text-left">Outliner</q-item-section>
+    </q-item>
+
+    <q-item
+      clickable
       :active="this.$route.name == 'memorize'"
       @click="this.$router.push('/memorize/learn')"
       active-class="act-menu-link"

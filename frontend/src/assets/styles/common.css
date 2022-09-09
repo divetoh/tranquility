@@ -49,3 +49,8 @@
 .pointer{
   cursor: pointer;
 }
+
+.file_tree .q-tree__node--selected {
+  background-color: #172830;
+  color: white;
+}

@@ -12,6 +12,7 @@ import current from "./modules/current.js";
 import activity from "./modules/activity.js";
 import daystate from "./modules/daystate.js";
 import memorize from "./modules/memorize.js";
+import folder from "./modules/folder.js";
 
 export default createStore({
   state: {},
@@ -31,5 +32,6 @@ export default createStore({
     regulartaskstate,
     dailytaskstate,
     memorize,
+    folder,
   },
 });

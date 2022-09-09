@@ -7,6 +7,7 @@ class SMarkdownOut(BaseModel):
     uid: int
     name: str
     md: str
+    folder: int
 
     class Config:
         orm_mode = True
