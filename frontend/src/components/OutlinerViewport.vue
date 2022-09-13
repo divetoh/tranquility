@@ -37,7 +37,6 @@ export default {
       this.fileSource = source;
       this.fileUid = uid;
       this.fileType = type;
-      console.log(uid, source, type);
       if (source == "markdown") await this.showMarkdown();
       else this.loading = false;
     },

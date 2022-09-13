@@ -1,6 +1,7 @@
 <template>
   <div class="row">
     <q-tree
+      ref="folderTreeRef"
       class="file_tree q-pa-sm"
       text-color="white"
       selected-color="white"
@@ -16,7 +17,6 @@
 
 <script>
 import { mapState } from "vuex";
-import { ref } from "vue";
 
 export default {
   name: "FolderTree",
@@ -25,7 +25,7 @@ export default {
   emits: ["select"],
   data() {
     return {
-      selected: ref(null),
+      selected: null,
     };
   },
   computed: mapState({
@@ -40,7 +40,7 @@ export default {
       }
       function make_branch(uid) {
         const branch = {
-          uid,
+          uid: parseInt(uid),
           label: state.folder.lst[uid].name,
           icon: "folder",
           children: [],
@@ -61,6 +61,9 @@ export default {
   methods: {
     async select(uid) {
       this.$emit("select", uid);
+    },
+    async setFolder(uid) {
+      this.selected = parseInt(uid);
     },
   },
 };

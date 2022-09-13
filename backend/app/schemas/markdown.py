@@ -17,9 +17,11 @@ class SMarkdownUpdate(BaseModel):
     """ Markdown Request for update """
     name: Optional[str]
     md: Optional[str]
+    folder: Optional[int]
 
 
 class SMarkdownCreate(BaseModel):
     """ Markdown Request for create """
     name: str = ""
     md: str = ""
+    folder: int

@@ -6,7 +6,7 @@ from pydantic import BaseModel
 class SFolderOut(BaseModel):
     """ Folder Response """
     uid: int
-    parent: Optional[str]
+    parent: Optional[int]
     name: str
     foldertype: int
 
@@ -16,13 +16,13 @@ class SFolderOut(BaseModel):
 
 class SFolderUpdate(BaseModel):
     """ Folder Request for update """
-    parent: Optional[str]
+    parent: Optional[int]
     name: str
 
 
 class SFolderCreate(BaseModel):
     """ Folder Request for create """
-    parent: Optional[str]
+    parent: Optional[int]
     name: str
     foldertype: int
 

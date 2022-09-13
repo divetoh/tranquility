@@ -1,6 +1,6 @@
 from sqlalchemy import select, literal_column
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import Any
+from typing import Any, Union
 
 from app.crud.base import CRUDBaseAuth
 from app.models.folder import Folder
@@ -20,5 +20,10 @@ class CRUDFolder(CRUDBaseAuth[Folder, SFolderCreate, SFolderUpdate]):
         query = query1.union(query2).order_by("name")
         result = await db.execute(query)
         return result.all()
+
+    async def create(self, db: AsyncSession, user: int, *, obj_in: SFolderCreate) -> Folder:
+        self.check_access(db, user, uid=obj_in.parent)
+        return await super().create(db, user, obj_in=obj_in)
+
 
 folder = CRUDFolder(Folder)

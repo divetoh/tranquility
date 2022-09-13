@@ -28,9 +28,9 @@ export default {
         //await dispatch("aCheckApiError", error);
       }
     },
-    async aMarkdownCreate({ commit }, { name, md }) {
+    async aMarkdownCreate({ commit }, { name, md, folder }) {
       try {
-        const response = await api.markdown.create({ name, md });
+        const response = await api.markdown.create({ name, md, folder });
         if (response.data) {
           var payload = response.data;
           payload.saved = true;
@@ -52,6 +52,7 @@ export default {
       state.markdown_data[payload.uid] = {
         name: payload.name,
         md: payload.md,
+        folder: payload.folder,
         saved: payload.saved,
       };
     },
