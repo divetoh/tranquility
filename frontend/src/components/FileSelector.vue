@@ -23,6 +23,22 @@
         no-caps
         color="white"
         style="background-color: #172830"
+        icon="drive_file_move"
+        :disabled="selectedFile === undefined"
+      >
+        <q-menu dark ref="moveMenuRef">
+          <div class="column w300 q-pa-md" style="max-height: 70vh">
+            <FolderTree ref="movetofolderlist" @select="selectMoveDestination" />
+          </div>
+        </q-menu>
+      </q-btn>
+      <q-btn
+        size="sm"
+        dense
+        flat
+        no-caps
+        color="white"
+        style="background-color: #172830"
         icon="delete"
         :disabled="selectedFile === undefined"
         @click="removeFile"
@@ -141,6 +157,10 @@ export default {
     },
     async removeFile() {
       this.$refs.filelist.remove();
+    },
+    async selectMoveDestination(uid) {
+      this.$refs.moveMenuRef.hide();
+      this.$refs.filelist.move(uid);
     },
   },
 };

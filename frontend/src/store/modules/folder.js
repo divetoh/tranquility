@@ -39,7 +39,26 @@ export default {
       else if (source == "jsondoc") response = await api.jsondoc.delete(uid);
       else return false;
       if (response.data) {
-        commit("folderRemoveFile", response.data);
+        commit("folderRemoveFile", { uid, source });
+        return response.data.uid;
+      }
+      return false;
+    },
+    async aFolderMove({ commit }, { uid, folder }) {
+      const response = await api.folder.update(uid, { parent: folder });
+      if (response.data) {
+        commit("folderMove", { uid, folder });
+        return true;
+      }
+      return false;
+    },
+    async aFolderMoveFile({ commit }, { uid, source, folder }) {
+      var response;
+      if (source == "markdown") response = await api.markdown.update(uid, { folder });
+      else if (source == "jsondoc") response = await api.jsondoc.update(uid, { folder });
+      else return false;
+      if (response.data) {
+        commit("folderMoveFile", { uid, source, folder });
         return response.data.uid;
       }
       return false;
@@ -97,6 +116,15 @@ export default {
     folderRemoveFile(state, { uid, source }) {
       if (source == "markdown" && this.state.markdown.markdown_data[uid] != undefined)
         delete this.state.markdown.markdown_data[uid];
+    },
+    folderMove(state, { uid, folder }) {
+      if (state.lst[uid].parent && !folder) state.root.push(uid);
+      if (!state.lst[uid].parent && folder) state.root.splice(state.root.indexOf(uid), 1);
+      state.lst[uid].parent = folder;
+    },
+    folderMoveFile(state, { uid, source, folder }) {
+      if (source == "markdown" && this.state.markdown.markdown_data[uid] != undefined)
+        this.state.markdown.markdown_data[uid].folder = folder;
     },
   },
 };

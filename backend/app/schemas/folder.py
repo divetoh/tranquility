@@ -17,7 +17,7 @@ class SFolderOut(BaseModel):
 class SFolderUpdate(BaseModel):
     """ Folder Request for update """
     parent: Optional[int]
-    name: str
+    name: Optional[str]
 
 
 class SFolderCreate(BaseModel):

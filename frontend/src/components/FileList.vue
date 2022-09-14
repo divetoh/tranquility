@@ -185,6 +185,24 @@ export default {
         }
       });
     },
+    async move(folder) {
+      if (folder == this.folder) return;
+      if (this.fileSource == "folder") {
+        this.$store.dispatch("aFolderMove", { uid: this.fileUid, folder });
+        for (const i in this.subFolders)
+          if (this.subFolders[i].uid == this.fileUid) {
+            this.subFolders.splice(i, 1);
+            break;
+          }
+      } else {
+        this.$store.dispatch("aFolderMoveFile", { uid: this.fileUid, source: this.fileSource, folder });
+        for (const i in this.folderContent)
+          if (this.folderContent[i].uid == this.fileUid && this.folderContent[i].source == this.fileSource) {
+            this.folderContent.splice(i, 1);
+            break;
+          }
+      }
+    },
   },
 };
 </script>
