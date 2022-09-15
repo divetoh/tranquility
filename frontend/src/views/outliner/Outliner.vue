@@ -1,11 +1,11 @@
 <template>
   <q-page
     class="flex full-width full-height q-ma-none"
-    style="overflow: hidden; max-width: 100%; max-height: 100%; box-sizing: border-box"
+    style="overflow: hidden; max-width: 100%; max-height: 100%; min-width: 100%; min-height: 100%; box-sizing: border-box; flex-wrap: nowrap; flex-direction: row"
     v-if="loaded"
   >
     <FileSelector @select="selectFile" />
-    <div class="column col-grow q-ma-sm">
+    <div class="column q-ma-sm" style="flex-wrap: nowrap; flex: 1 1; max-height: 100%">
       <OutlinerViewport ref="viewport" />
     </div>
   </q-page>

@@ -1,7 +1,7 @@
 <template>
   <div
     class="w600 column q-py-sm q-pl-sm"
-    style="overflow: hidden; max-height: 100%; flex-wrap: nowrap; max-width: 600px; box-model: border-box"
+    style="overflow: hidden; max-height: 100%; flex-wrap: nowrap; max-width: 550px; min-width: 550px; box-model: border-box"
   >
     <q-bar class="row text-white q-mb-sm shadow-2 full-width" style="background-color: #394454ce" size="xs">
       <q-space />
