@@ -85,11 +85,11 @@ def upgrade():
                 for col in workspace["content"]:
                     for row in col["content"]:
                         if row["type"] == "tasklist":
-                            query = f"UPDATE jsondoc SET folder={fld_wsp_id} WHERE uid={uid} AND \
+                            query = f"UPDATE jsondoc SET folder={fld_wsp_id} WHERE uid={int(row['uid'])} AND \
                                     \"user\"={user} AND doctype='tasklist'"
                             conn.execute(sa.text(query))
                         elif row["type"] == "markdown":
-                            query = f"UPDATE markdown SET folder={fld_wsp_id} WHERE uid={uid} AND \
+                            query = f"UPDATE markdown SET folder={fld_wsp_id} WHERE uid={int(row['uid'])} AND \
                                     \"user\"={user}"
                             conn.execute(sa.text(query))
             except:
