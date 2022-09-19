@@ -93,10 +93,9 @@ export default {
       if (this.fileSource == "markdown") this.saveMarkdown();
     },
     saveMarkdown() {
-      this.$store.dispatch("aMarkdownSave", {
-        md: this.md,
-        name: this.mdName,
+      this.$store.dispatch("aMarkdownUpdate", {
         uid: this.fileUid,
+        data: { md: this.md },
       }).auth;
     },
     async showMarkdown() {

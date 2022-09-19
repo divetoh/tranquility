@@ -35,6 +35,7 @@ export default {
         await api.jsondoc.update(uid, {
           jsondoc: JSON.stringify(state.workspace_lst[uid].workspace),
           name: state.workspace_lst[uid].name,
+          folder: state.workspace_lst[uid].folder,
         });
       } catch (error) {
         //await dispatch("aCheckApiError", error);
@@ -44,6 +45,7 @@ export default {
       const response = await api.jsondoc.create({
         doctype: "workspace",
         name: payload.name,
+        folder: payload.folder,
         jsondoc: JSON.stringify({
           name: payload.name,
           type: payload.type,
@@ -55,6 +57,14 @@ export default {
         commit("workspaceSet", data);
         return data.uid;
       }
+    },
+    async aWorkspaceSetName({ state, rootState, commit, dispatch }, { workspace, name }) {
+      // Renames workspace and it's folder (if folder name same as workspace name)
+      const old_name = state.workspace_lst[workspace].name;
+      const folder = state.workspace_lst[workspace].folder;
+      commit("workspaceSetName", { workspace, name });
+      await dispatch("aWorkspaceSave", workspace);
+      if (old_name == rootState.folder.lst[folder].name) await dispatch("aFolderSetName", { uid: folder, name });
     },
     async aWorkspaceColumnAppendTasklist({ commit, dispatch }, payload) {
       commit("workspaceColumnAppendTasklist", payload);
@@ -100,10 +110,6 @@ export default {
       commit("workspaceSetBlockProps", payload);
       await dispatch("aWorkspaceSave", payload.workspace);
     },
-    async aWorkspaceSetName({ commit, dispatch }, { workspace, name }) {
-      commit("workspaceSetName", { workspace, name });
-      await dispatch("aWorkspaceSave", workspace);
-    },
     async aCrossWorkspaceBlockMove({ commit, dispatch }, payload) {
       commit("crossWorkspaceBlockMove", payload);
       await dispatch("aWorkspaceSave", payload.workspace);
@@ -123,6 +129,7 @@ export default {
     workspaceSet(state, payload) {
       state.workspace_lst[payload.uid] = {
         name: payload.name,
+        folder: payload.folder,
         workspace: JSON.parse(payload.jsondoc),
         saved: payload.saved,
       };

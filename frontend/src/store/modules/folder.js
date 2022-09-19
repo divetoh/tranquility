@@ -4,6 +4,9 @@ export default {
   state: {
     lst: {},
     root: [],
+    f_inbox: undefined,
+    f_activity: undefined,
+    f_system: undefined,
   },
   actions: {
     async aFolderLoadAll({ commit }) {
@@ -90,6 +93,9 @@ export default {
       for (var f of payload) {
         state.lst[f.uid] = f;
         if (!f.parent) state.root.push(f.uid);
+        if (f.foldertype==32) state.f_inbox = f.uid;
+        if (f.foldertype==64) state.f_system = f.uid;
+        if (f.foldertype==65) state.f_activity = f.uid;
       }
     },
     folderSet(state, payload) {
@@ -104,6 +110,9 @@ export default {
     folderSetFileName(state, { uid, source, name }) {
       if (source == "markdown" && this.state.markdown.markdown_data[uid] != undefined)
         this.state.markdown.markdown_data[uid].name = name;
+      else if (source == "jsondoc" && this.state.workspace.workspace_lst[uid] != undefined) {
+        this.state.workspace.workspace_lst[uid].name = name;
+      }
     },
     folderRemove(state, { uid, files }) {
       delete state.lst[uid];

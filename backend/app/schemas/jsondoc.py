@@ -20,6 +20,7 @@ class SJSONDocUpdate(BaseModel):
     doctype: Optional[str]
     name: Optional[str]
     jsondoc: Optional[str]
+    folder: Optional[int]
 
 
 class SJSONDocCreate(BaseModel):
@@ -27,3 +28,4 @@ class SJSONDocCreate(BaseModel):
     doctype: str = ""
     name: str = ""
     jsondoc: str = ""
+    folder: int

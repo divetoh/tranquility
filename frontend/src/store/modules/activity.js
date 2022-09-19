@@ -38,7 +38,8 @@ export default {
       const doc = JSON.parse(payload.jsondoc);
       state.lst[payload.uid] = {
         uid: payload.uid,
-        name: payload.uid,
+        name: payload.name,
+        folder: payload.folder,
         workspaces: doc.workspaces,
       };
     },

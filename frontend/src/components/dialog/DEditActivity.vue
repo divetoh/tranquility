@@ -122,14 +122,18 @@ export default {
       this.hide();
     },
     async create_workspace(type) {
+      const activity = this.$store.state.current.activity;
+      const folder = await this.$store.dispatch("aFolderCreate", {
+        name: "New workspace",
+        foldertype: 1,
+        parent: this.$store.state.activity.lst[activity].folder,
+      });
       var workspace = await this.$store.dispatch("aWorkspaceCreate", {
         name: "New workspace",
         type: type,
+        folder,
       });
-      await this.$store.dispatch("aActivityAppendWorkspace", {
-        activity: this.$store.state.current.activity,
-        workspace,
-      });
+      await this.$store.dispatch("aActivityAppendWorkspace", { activity, workspace });
     },
     async disable_workspace(workspace) {
       await this.$store.dispatch("aActivityRemoveWorkspace", {

@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.sql.expression import true
 
 from app import schemas
-from app.crud.base import CRUDBaseAuth
+from app.crud.base_auth import CRUDBaseAuth
 from app.models import MemorizeCard, MemorizeCardState, MemorizeCategory
 
 

@@ -53,10 +53,9 @@ export default {
       this.onDialogOK();
     },
     saveData: function () {
-      this.$store.dispatch("aMarkdownSave", {
-        md: this.md,
-        name: this.name,
+      this.$store.dispatch("aMarkdownUpdate", {
         uid: this.uid,
+        data: { md: this.md },
       }).auth;
     },
     showMarkdownSyntax() {

@@ -1,4 +1,4 @@
-from app.crud.base import CRUDBaseAuth
+from app.crud.base_auth import CRUDBaseAuth
 from app.models.regulartask import RegularTask
 from app.schemas import SRegularTaskCreate, SRegularTaskUpdate
 

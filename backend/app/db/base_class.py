@@ -49,3 +49,8 @@ class MixinUID():
 
 class MixinUser(MixinUID):
     user: int
+
+
+class MixinFolder(MixinUID):
+    folder: int
+    folder_r: Any

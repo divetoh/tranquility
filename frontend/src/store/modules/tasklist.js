@@ -18,10 +18,11 @@ export default {
         //await dispatch("aCheckApiError", error);
       }
     },
-    async aTasklistCreate({ commit }, { name }) {
+    async aTasklistCreate({ commit }, { name, folder }) {
       const response = await api.jsondoc.create({
         doctype: "tasklist",
-        name: name,
+        name,
+        folder,
         jsondoc: JSON.stringify([]),
       });
       if (response.data) {
@@ -95,6 +96,7 @@ export default {
       state.lst[payload.uid] = {
         uid: payload.uid,
         name: payload.name,
+        folder: payload.folder,
         doctype: payload.doctype,
         saved: payload.saved,
         jsondoc: JSON.parse(payload.jsondoc),

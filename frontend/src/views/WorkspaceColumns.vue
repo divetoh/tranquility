@@ -301,6 +301,7 @@ export default {
       var markdown = await this.$store.dispatch("aMarkdownCreate", {
         name: "Workspace block",
         md: "New block.",
+        folder: this.$store.state.workspace.workspace_lst[this.uid].folder,
       });
       await this.$store.dispatch("aWorkspaceColumnAppendMarkdown", {
         workspace: this.uid,
@@ -311,6 +312,7 @@ export default {
     createBlockTasklist: async function (column) {
       var tasklist = await this.$store.dispatch("aTasklistCreate", {
         name: "Workspace tasklist",
+        folder: this.$store.state.workspace.workspace_lst[this.uid].folder,
       });
       await this.$store.dispatch("aWorkspaceColumnAppendTasklist", {
         workspace: this.uid,

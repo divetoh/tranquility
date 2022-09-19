@@ -17,10 +17,10 @@ export default {
         //await dispatch("aCheckApiError", error);
       }
     },
-    async aMarkdownSave({ commit }, { uid, name, md }) {
+    async aMarkdownUpdate({ commit }, { uid, data }) {
       try {
-        commit("markdownSet", { uid, name, md, saved: false });
-        const response = await api.markdown.update(uid, { name, md });
+        commit("markdownUpdate", { uid, data });
+        const response = await api.markdown.update(uid, data);
         if (response.data) {
           commit("markdownSetSaved", { uid, saved: true });
         }
@@ -52,9 +52,14 @@ export default {
       state.markdown_data[payload.uid] = {
         name: payload.name,
         md: payload.md,
-        folder: payload.folder,
         saved: payload.saved,
+        folder: payload.folder,
       };
+    },
+    markdownUpdate(state, { uid, data }) {
+      const md = state.markdown_data[uid];
+      for (const i in data) md[i] = data[i];
+      if (!data.saved) md.saved = false;
     },
     markdownSetSaved(state, payload) {
       state.markdown_data[payload.uid].saved = payload.saved;
