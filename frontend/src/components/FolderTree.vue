@@ -2,7 +2,7 @@
   <div class="row">
     <q-tree
       ref="folderTreeRef"
-      class="file_tree q-pa-sm"
+      class="file_tree q-pa-sm full-width"
       text-color="white"
       selected-color="white"
       :nodes="folderTree"
@@ -32,8 +32,10 @@ export default {
     folderTree: function (state) {
       const tree = [];
       const backref = {};
+      const filter = state.current.folderFilter;
       for (const i in state.folder.lst) {
         const b = state.folder.lst[i];
+        if (filter && b.foldertype > 63) continue;
         if (!b.parent) continue;
         if (!backref[b.parent]) backref[b.parent] = [i];
         else backref[b.parent].push(i);
@@ -46,12 +48,23 @@ export default {
           children: [],
         };
         if (backref[uid]) {
+          backref[uid].sort((a, b) => {
+            if (state.folder.lst[a].name > state.folder.lst[b].name) return 1;
+            if (state.folder.lst[a].name < state.folder.lst[b].name) return -1;
+            return 0;
+          });
           for (const i of backref[uid]) branch.children.push(make_branch(i));
         }
         return branch;
       }
 
-      for (const i of state.folder.root) {
+      const root = [...state.folder.root].sort((a, b) => {
+        if (state.folder.lst[a].name > state.folder.lst[b].name) return 1;
+        if (state.folder.lst[a].name < state.folder.lst[b].name) return -1;
+        return 0;
+      });
+      for (const i of root) {
+        if (filter && state.folder.lst[i].foldertype > 63) continue;
         tree.push(make_branch(i));
       }
 

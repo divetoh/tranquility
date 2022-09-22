@@ -48,7 +48,9 @@ export default {
       return false;
     },
     async aFolderMove({ commit }, { uid, folder }) {
-      const response = await api.folder.update(uid, { parent: folder });
+      var response;
+      if (folder) response = await api.folder.update(uid, { parent: folder });
+      else response = await api.folder.update(uid, { parent: null });
       if (response.data) {
         commit("folderMove", { uid, folder });
         return true;

@@ -2,6 +2,7 @@
 
 import json
 from sqlalchemy.ext.asyncio import AsyncSession
+from typing import Optional
 
 from app import crud, models, schemas
 
@@ -55,13 +56,51 @@ async def import_daystate(db: AsyncSession, user: int, data: dict) -> None:
     await db.flush()
 
 
-async def import_markdown(db: AsyncSession, user: int, data: dict) -> dict[int, int]:
+async def import_folder(db: AsyncSession, user: int, data: dict) -> tuple[dict[int, int], int]:
+    # Import folder tree
+    map_folder: dict[int, models.Folder] = {}
+    inbox: Optional[models.Folder] = None
+
+    parent: dict[int, int] = {}
+
+    for i in data.get('folder', []):
+        sc_folder = schemas.SFolderCreate(name=i["name"], foldertype=i["foldertype"])
+        obj_folder = models.Folder(user=user, **sc_folder.dict())
+        map_folder[i["uid"]] = obj_folder
+        if i["foldertype"] == 32:
+            inbox = obj_folder
+        if i["parent"]:
+            parent[i["uid"]] = i["parent"]
+
+    if not inbox:
+        inbox = models.Folder(user=user, name=".inbox", foldertype=32)
+        db.add(inbox)
+
+    db.add_all(map_folder.values())
+    await db.flush()
+
+    # Restore parent uid, if absent (incorrect tree) - move to inbox
+    for juid in parent:
+        if parent[juid] in map_folder:
+            map_folder[juid].parent = map_folder[parent[juid]].uid
+        else:
+            map_folder[juid].parent = inbox.uid
+    await db.flush()
+
+    return ({juid: map_folder[juid].uid for juid in map_folder}, inbox.uid)
+
+
+async def import_markdown(db: AsyncSession, data: dict, map_folder: dict, inbox: int) -> dict[int, int]:
     # Import markdown
     map_markdown: dict[int, models.Markdown] = {}
 
     for i in data.get('markdown', []):
         sc_md = schemas.SMarkdownCreate(**i)
-        obj_md = models.Markdown(user=user, **sc_md.dict())
+        if sc_md.folder in map_folder:
+            sc_md.folder = map_folder[sc_md.folder]
+        else:
+            sc_md.folder = inbox
+        obj_md = models.Markdown(**sc_md.dict())
         map_markdown[i["uid"]] = obj_md
 
     db.add_all(map_markdown.values())
@@ -150,11 +189,13 @@ async def import_data(db: AsyncSession, db_obj: models.User, data_source: str) -
     with open("initdata/" + data_source) as f:
         data = json.load(f)
 
+    map_folder, inbox = await import_folder(db, userid, data)
     map_regulartask = await import_regulartask(db, userid, data)
     map_dailytask = await import_dailytask(db, userid, data)
     await import_daystate(db, userid, data)
-    map_markdown = await import_markdown(db, userid, data)
+    map_markdown = await import_markdown(db, data, map_folder, inbox)
     await import_memorize(db, userid, data)
+
     map_jsondoc: dict[int, models.JSONDoc] = {}
 
     # Import tasklists
@@ -163,7 +204,11 @@ async def import_data(db: AsyncSession, db_obj: models.User, data_source: str) -
             continue
         new_jsondoc = replace_tasklist_uid(i["jsondoc"], map_regulartask, map_dailytask)
         sc_jd = schemas.SJSONDocCreate(**(i | {"jsondoc": new_jsondoc}))
-        obj_jd = models.JSONDoc(user=userid, **sc_jd.dict())
+        if sc_jd.folder in map_folder:
+            sc_jd.folder = map_folder[sc_jd.folder]
+        else:
+            sc_jd.folder = inbox
+        obj_jd = models.JSONDoc(**sc_jd.dict())
         db.add(obj_jd)
         map_jsondoc[i["uid"]] = obj_jd
     await db.flush()
@@ -174,7 +219,11 @@ async def import_data(db: AsyncSession, db_obj: models.User, data_source: str) -
             continue
         new_jsondoc = replace_workspace_uid(i["jsondoc"], map_markdown, map_jsondoc)
         sc_jd = schemas.SJSONDocCreate(**(i | {"jsondoc": new_jsondoc}))
-        obj_jd = models.JSONDoc(user=userid, **sc_jd.dict())
+        if sc_jd.folder in map_folder:
+            sc_jd.folder = map_folder[sc_jd.folder]
+        else:
+            sc_jd.folder = inbox
+        obj_jd = models.JSONDoc(**sc_jd.dict())
         db.add(obj_jd)
         map_jsondoc[i["uid"]] = obj_jd
     await db.flush()
@@ -185,7 +234,11 @@ async def import_data(db: AsyncSession, db_obj: models.User, data_source: str) -
             continue
         new_jsondoc = replace_activity_uid(i["jsondoc"], map_jsondoc)
         sc_jd = schemas.SJSONDocCreate(**(i | {"jsondoc": new_jsondoc}))
-        obj_jd = models.JSONDoc(user=userid, **sc_jd.dict())
+        if sc_jd.folder in map_folder:
+            sc_jd.folder = map_folder[sc_jd.folder]
+        else:
+            sc_jd.folder = inbox
+        obj_jd = models.JSONDoc(**sc_jd.dict())
         db.add(obj_jd)
         map_jsondoc[i["uid"]] = obj_jd
     await db.commit()

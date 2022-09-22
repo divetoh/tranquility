@@ -1,9 +1,28 @@
 <template>
-  <div
-    class="w600 column q-py-sm q-pl-sm"
-    style="overflow: hidden; max-height: 100%; flex-wrap: nowrap; max-width: 550px; min-width: 550px; box-model: border-box"
-  >
+  <div class="w600 column q-py-sm q-pl-sm file-selector">
     <q-bar class="row text-white q-mb-sm shadow-2 full-width" style="background-color: #394454ce" size="xs">
+      <q-btn
+        size="sm"
+        dense
+        flat
+        no-caps
+        color="white"
+        style="background-color: #172830"
+        icon="filter_alt"
+        @click="setFilter(1)"
+        v-if="filter == 0"
+      />
+      <q-btn
+        size="sm"
+        dense
+        flat
+        no-caps
+        color="white"
+        style="background-color: #172830"
+        icon="filter_alt_off"
+        @click="setFilter(0)"
+        v-if="filter == 1"
+      />
       <q-space />
       <q-btn
         size="sm"
@@ -28,6 +47,9 @@
       >
         <q-menu dark ref="moveMenuRef">
           <div class="column w300 q-pa-md" style="max-height: 70vh">
+            <div v-if="selectedType == 'folder'">
+              <q-btn no-caps @click="selectMoveDestination()">/root</q-btn>
+            </div>
             <FolderTree ref="movetofolderlist" @select="selectMoveDestination" />
           </div>
         </q-menu>
@@ -98,6 +120,7 @@
 <script>
 import FolderTree from "@/components/FolderTree";
 import FileList from "@/components/FileList";
+import { mapState } from "vuex";
 
 export default {
   name: "FileSelector",
@@ -114,7 +137,13 @@ export default {
       selectedType: undefined,
     };
   },
+  computed: mapState({
+    filter: (state) => state.current.folderFilter,
+  }),
   methods: {
+    async setFilter(val) {
+      this.$store.state.current.folderFilter = val;
+    },
     async selectFolder(uid) {
       this.selectedFolder = uid;
       this.$refs.filelist.setFolder(uid);
@@ -165,3 +194,14 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.file-selector {
+  overflow: hidden;
+  max-height: 100%;
+  flex-wrap: nowrap;
+  max-width: 550px;
+  min-width: 550px;
+  box-sizing: border-box;
+}
+</style>

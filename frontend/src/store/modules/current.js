@@ -3,6 +3,8 @@ export default {
     activity: undefined,
     workspace: undefined,
     date: undefined,
+    folderFilter: 1,
+    outlinerViewMode: "view",
   },
   actions: {
     async aCurrentSetActivity({ commit, dispatch, rootState }, uid) {

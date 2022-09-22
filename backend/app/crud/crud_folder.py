@@ -22,7 +22,8 @@ class CRUDFolder(CRUDBaseAuth[Folder, SFolderCreate, SFolderUpdate]):
         return result.all()
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: SFolderCreate) -> Folder:
-        await self.check_access(db, user, uid=obj_in.parent)
+        if (obj_in.parent):
+            await self.check_access(db, user, uid=obj_in.parent)
         return await super().create(db, user, obj_in=obj_in)
 
     # TODO: modify update (check access)

@@ -7,16 +7,19 @@
     "jsondoc": [
         {
             "uid": 1,
+            "folder": 2,
             "doctype": "tasklist",
             "name": "Core Tasklist",
             "jsondoc": "[]"
         }, {
             "uid": 2,
+            "folder": 4,
             "doctype": "activity",
             "name": "CoreActivity",
             "jsondoc": "{\"workspaces\":[3]}"
         }, {
             "uid": 3,
+            "folder": 5,
             "doctype": "workspace",
             "name": "Wellcome",
             "jsondoc": "{\"type\":\"column\",\"content\":[{\"name\":\"Column\",\"content\":[{\"type\":\"markdown\",\"uid\":1}]}]}"
@@ -25,10 +28,43 @@
     "markdown": [
         {
             "uid": 1,
+            "folder": 5,
             "name": "Workspace block",
             "md": "# Wellcome to Tranquility\n\n[github](https://github.com/divetoh/tranquility)"
         }
     ],
     "regulartask": [],
-    "regulartaskstate": []
+    "regulartaskstate": [],
+    "folder": [
+        {
+            "uid": 1,
+            "parent": null,
+            "name": ".inbox",
+            "foldertype": 32
+        },
+        {
+            "uid": 2,
+            "parent": null,
+            "name": ".system",
+            "foldertype": 64
+        },
+        {
+            "uid": 3,
+            "parent": null,
+            "name": ".activity",
+            "foldertype": 65
+        },
+        {
+            "uid": 4,
+            "parent": 3,
+            "name": "Core Activity",
+            "foldertype": 1
+        },
+        {
+            "uid": 5,
+            "parent": 4,
+            "name": "Workspace",
+            "foldertype": 1
+        }
+    ]
 }

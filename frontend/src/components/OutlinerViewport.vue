@@ -2,12 +2,18 @@
   <q-card class="full-width full-height text-left q-pa-none column">
     <q-bar style="background-color: rgb(245, 245, 245)">
       <template v-if="fileType == 'markdown'">
-        <q-btn-group class="back-grey" flat dense>
-          <q-btn icon="edit_note" flat dense :color="mode == 'edit' ? 'primary' : 'white'" @click="setEditMode" />
-          <q-btn icon="vertical_split" flat dense :color="mode == 'both' ? 'primary' : 'white'" @click="setBothMode" />
-          <q-btn icon="preview" flat dense :color="mode == 'view' ? 'primary' : 'white'" @click="setViewMode" />
+        <q-btn-group class="bg-grey-5" flat dense>
+          <q-btn icon="edit_note" flat dense :color="mode == 'edit' ? 'primary' : 'gray-10'" @click="setMode('edit')" />
+          <q-btn
+            icon="vertical_split"
+            flat
+            dense
+            :color="mode == 'both' ? 'primary' : 'gray-10'"
+            @click="setMode('both')"
+          />
+          <q-btn icon="preview" flat dense :color="mode == 'view' ? 'primary' : 'gray-10'" @click="setMode('view')" />
         </q-btn-group>
-        <q-btn icon="info" dense class="back-grey" color="white" flat @click="showMarkdownSyntax" />
+        <q-btn icon="info" dense class="bg-grey-5" color="gray-10" flat @click="showMarkdownSyntax" />
       </template>
       <q-space />
       <q-btn class="bg-primary" color="white" no-caps flat label="Save" @click="saveFile" v-if="showSaveBtn" />
@@ -16,8 +22,14 @@
     <q-card-section class="col row edit-viewport">
       <div v-if="loading">Loading... <q-spinner-rings color="grey" size="md" /></div>
       <template v-else-if="fileSource == 'markdown'">
-        <textarea class="input col-grow" :value="md" @input="update" v-if="showEdit" style="resize: none"></textarea>
-        <div class="output q-pl-lg" v-html="markdown_fmt" v-if="showView"></div>
+        <textarea
+          class="input col-grow"
+          :value="md"
+          @input="update"
+          v-if="mode == 'edit' || mode == 'both'"
+          style="resize: none"
+        ></textarea>
+        <div class="output q-pl-lg" v-html="markdown_fmt" v-if="mode == 'view' || mode == 'both'"></div>
       </template>
       <template v-else-if="fileSource == 'jsondoc'">
         <div class="output q-pl-lg col-grow">
@@ -54,7 +66,6 @@ export default {
       showEdit: true,
       showView: true,
       showSaveBtn: false,
-      mode: "both",
       md: "",
       jsondoc: "",
       mdName: "",
@@ -65,6 +76,7 @@ export default {
     markdown_fmt() {
       return marked(this.md);
     },
+    mode: (state) => state.current.outlinerViewMode,
   }),
   methods: {
     update: debounce(function (e) {
@@ -106,20 +118,8 @@ export default {
       this.mdName = this.$store.state.markdown.markdown_data[this.fileUid].name;
       this.loading = false;
     },
-    async setEditMode() {
-      this.mode = "edit";
-      this.showEdit = true;
-      this.showView = false;
-    },
-    async setBothMode() {
-      this.mode = "both";
-      this.showEdit = true;
-      this.showView = true;
-    },
-    async setViewMode() {
-      this.mode = "view";
-      this.showEdit = false;
-      this.showView = true;
+    async setMode(mode) {
+      this.$store.state.current.outlinerViewMode = mode;
     },
     async showMarkdownSyntax() {
       Dialog.create({

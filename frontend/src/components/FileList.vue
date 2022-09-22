@@ -1,22 +1,22 @@
 <template>
   <div class="full-width full-height">
     <q-list bordered class="text-white text-left" dense>
-      <q-item
-        clickable
-        v-ripple
-        active-class="act-menu-link"
-        dense
-        v-for="item in subFolders"
-        :key="item"
-        :active="fileSelected == 'folder.' + item.uid"
-        @click="folderSelect(item.uid)"
-      >
-        <q-item-section side dense style="padding-right: 4px">
-          <q-icon name="folder" dense size="xs" color="white" />
-        </q-item-section>
-        <q-item-section>{{ item.name }}</q-item-section>
-      </q-item>
-
+      <template v-for="item in subFolders" :key="item">
+        <q-item
+          clickable
+          v-ripple
+          active-class="act-menu-link"
+          dense
+          :active="fileSelected == 'folder.' + item.uid"
+          @click="folderSelect(item.uid)"
+          v-if="!filter || item.foldertype < 64"
+        >
+          <q-item-section side dense style="padding-right: 4px">
+            <q-icon name="folder" dense size="xs" color="white" />
+          </q-item-section>
+          <q-item-section>{{ item.name }}</q-item-section>
+        </q-item>
+      </template>
       <q-item
         clickable
         v-ripple
@@ -58,7 +58,9 @@ export default {
   },
   emits: ["select", "selectFolder"],
   components: {},
-  computed: mapState({}),
+  computed: mapState({
+    filter: (state) => state.current.folderFilter,
+  }),
   methods: {
     async setFolder(uid) {
       if (this.folder === uid) return;
@@ -70,14 +72,19 @@ export default {
         this.folderContent = (await api.folder.get_content(uid)).data;
         for (const i in this.$store.state.folder.lst) {
           const f = this.$store.state.folder.lst[i];
-          if (f.parent == uid) this.subFolders.push({ uid: f.uid, name: f.name });
+          if (f.parent == uid) this.subFolders.push({ uid: f.uid, name: f.name, foldertype: f.foldertype });
         }
       } else {
         for (const i of this.$store.state.folder.root) {
           const f = this.$store.state.folder.lst[i];
-          this.subFolders.push({ uid: f.uid, name: f.name });
+          this.subFolders.push({ uid: f.uid, name: f.name, foldertype: f.foldertype });
         }
       }
+      this.subFolders.sort((a, b) => {
+        if (a.name > b.name) return 1;
+        if (a.name < b.name) return -1;
+        return 0;
+      });
     },
     async fileSelect(uid, source, type) {
       this.fileSelected = source + "." + uid;
@@ -104,7 +111,7 @@ export default {
     },
     async appendFolder(uid) {
       const f = this.$store.state.folder.lst[uid];
-      this.subFolders.push({ uid: f.uid, name: f.name });
+      this.subFolders.push({ uid: f.uid, name: f.name, foldertype: f.foldertype });
       // TODO: scroll to folder
     },
     async rename() {

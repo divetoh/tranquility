@@ -98,7 +98,7 @@ class CRUDBaseFolder(Generic[AuthModelType, CreateSchemaType, UpdateSchemaType])
 
     async def create(self, db: AsyncSession, user: int, *, obj_in: CreateSchemaType) -> AuthModelType:
         obj_in_data = obj_in.dict()
-        self.check_folder_access(db, user, uid = obj_in_data["folder"])
+        await self.check_folder_access(db, user, uid = obj_in_data["folder"])
         db_obj = self.model(**obj_in_data)
         db.add(db_obj)
         await db.flush()
