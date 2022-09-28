@@ -124,11 +124,12 @@ import { mapState } from "vuex";
 
 export default {
   name: "FileSelector",
+  props: ["startFolder", "startFile", "startFileSource"],
   components: {
     FolderTree,
     FileList,
   },
-  emits: ["select"],
+  emits: ["select", "selectFolder"],
   data: function () {
     return {
       selectedFolder: undefined,
@@ -136,6 +137,20 @@ export default {
       selectedSource: undefined,
       selectedType: undefined,
     };
+  },
+  created() {
+    this.selectedFolder = this.$props.startFolder;
+    this.selectedFile = this.$props.startFile;
+    this.selectedSource = this.$props.startFileSource;
+  },
+  mounted() {
+    if (this.selectedFolder) {
+      this.$refs.folderlist.setFolder(this.selectedFolder);
+      this.$refs.filelist.setFolder(this.selectedFolder);
+    }
+    if (this.selectedFile) {
+      this.$refs.filelist.setFile(this.selectedFile, this.selectedSource);
+    }
   },
   computed: mapState({
     filter: (state) => state.current.folderFilter,
@@ -147,10 +162,12 @@ export default {
     async selectFolder(uid) {
       this.selectedFolder = uid;
       this.$refs.filelist.setFolder(uid);
+      this.$emit("selectFolder", this.selectedFolder);
     },
     async selectFolderFromFilePanel(uid) {
       this.selectedFolder = uid;
       this.$refs.folderlist.setFolder(this.selectedFolder);
+      this.$emit("selectFolder", this.selectedFolder);
     },
     async selectFile(uid, source, type) {
       this.selectedFile = uid;

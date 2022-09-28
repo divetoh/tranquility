@@ -8,6 +8,7 @@ const routes = [
     children: [
       {
         path: "login",
+        name: "login",
         component: () => import("../views/Login.vue"),
       },
       {
@@ -21,6 +22,10 @@ const routes = [
       },
       {
         path: "ol",
+        component: () => import("../views/outliner/Outliner.vue"),
+      },
+      {
+        path: "ol/:fld_uid(\\d+)/:file_uid?",
         name: "ol",
         component: () => import("../views/outliner/Outliner.vue"),
       },

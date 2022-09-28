@@ -5,6 +5,9 @@ export default {
     date: undefined,
     folderFilter: 1,
     outlinerViewMode: "view",
+    folderUid: 0,
+    fileSource: undefined,
+    fileUid: undefined,
   },
   actions: {
     async aCurrentSetActivity({ commit, dispatch, rootState }, uid) {
@@ -16,6 +19,12 @@ export default {
     async aCurrentSetWorkspace({ commit, dispatch, rootState }, uid) {
       if (uid != undefined && rootState.workspace.workspace_lst[uid] == undefined) dispatch("aWorkspaceLoad", uid);
       commit("currentSetWorkspace", uid);
+    },
+    async aCurrentSetFolder({ commit }, uid) {
+      commit("currentSetFolder", uid);
+    },
+    async aCurrentSetFile({ commit }, { source, uid }) {
+      commit("currentSetFile", { source, uid });
     },
     async aCurrentSetDate({ commit, dispatch, rootState }) {
       if (!rootState.auth.isLoggedIn) return;
@@ -39,6 +48,13 @@ export default {
     },
     currentSetWorkspace(state, payload) {
       state.workspace = payload;
+    },
+    currentSetFolder(state, uid) {
+      state.folderUid = uid;
+    },
+    currentSetFile(state, { source, uid }) {
+      state.fileSource = source;
+      state.fileUid = uid;
     },
   },
 };

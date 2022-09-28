@@ -67,7 +67,7 @@ export default {
       this.folder = uid;
       this.folderContent = [];
       this.subFolders = [];
-      this.fileSelect();
+      await this.setFile();
       if (uid) {
         this.folderContent = (await api.folder.get_content(uid)).data;
         for (const i in this.$store.state.folder.lst) {
@@ -87,10 +87,14 @@ export default {
       });
     },
     async fileSelect(uid, source, type) {
+      // Event: user select file
+      await this.setFile(uid, source);
+      this.$emit("select", uid, source, type);
+    },
+    async setFile(uid, source) {
       this.fileSelected = source + "." + uid;
       this.fileUid = uid;
       this.fileSource = source;
-      this.$emit("select", uid, source, type);
     },
     async folderSelect(uid) {
       if (this.fileSelected != "folder." + uid) {

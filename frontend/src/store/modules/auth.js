@@ -31,8 +31,8 @@ export default {
             const response = await api.user.get("me");
             commit("setLoggedIn", true);
             commit("setUserProfile", response.data);
-            await dispatch("aCurrentSetActivity", response.data.coreactivity);
             await dispatch("aFolderLoadAll");
+            await dispatch("aCurrentSetActivity", response.data.coreactivity);
           } catch (error) {
             await dispatch("aRemoveLogIn");
           }
@@ -62,6 +62,7 @@ export default {
         saveLocalToken(token);
         commit("setToken", token);
         await dispatch("aGetUserProfile");
+        await dispatch("aFolderLoadAll");
         await dispatch("aCurrentSetActivity", state.userProfile.coreactivity);
         commit("setLoggedIn", true);
         commit("setLogInError", false);
@@ -91,9 +92,8 @@ export default {
       router.push("/");
     },
     async aRouteLogOut() {
-      if (router.currentRoute.path !== "/login") {
-        router.push("/login");
-      }
+      window.location.href = "/";
+      window.location.reload(true);
     },
     async aAuthSetFullname({ commit }, name) {
       commit("setFullname", name);

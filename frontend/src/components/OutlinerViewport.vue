@@ -1,8 +1,8 @@
 <template>
   <q-card class="full-width full-height text-left q-pa-none column">
     <q-bar style="background-color: rgb(245, 245, 245)">
-      <template v-if="fileType == 'markdown'">
-        <q-btn-group class="bg-grey-5" flat dense>
+      <template v-if="fileSource == 'markdown'">
+        <q-btn-group class="bg-grey-4" flat dense>
           <q-btn icon="edit_note" flat dense :color="mode == 'edit' ? 'primary' : 'gray-10'" @click="setMode('edit')" />
           <q-btn
             icon="vertical_split"
@@ -13,7 +13,7 @@
           />
           <q-btn icon="preview" flat dense :color="mode == 'view' ? 'primary' : 'gray-10'" @click="setMode('view')" />
         </q-btn-group>
-        <q-btn icon="info" dense class="bg-grey-5" color="gray-10" flat @click="showMarkdownSyntax" />
+        <q-btn icon="info" dense class="bg-grey-4" color="gray-10" flat @click="showMarkdownSyntax" />
       </template>
       <q-space />
       <q-btn class="bg-primary" color="white" no-caps flat label="Save" @click="saveFile" v-if="showSaveBtn" />
@@ -53,7 +53,10 @@ import { api } from "@/api";
 
 export default {
   name: "OutlinerViewport",
-  created: async function () {},
+  props: ["startFile", "startFileSource"],
+  created: function () {
+    if (this.$props.startFile) this.setFile(this.$props.startFile, this.$props.startFileSource);
+  },
   beforeUnmount() {
     this.saveFile();
   },
