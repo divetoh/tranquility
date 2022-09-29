@@ -43,9 +43,7 @@ import { Dialog } from "quasar";
 
 export default {
   name: "FileList",
-  created: async function () {
-    await this.setFolder(undefined);
-  },
+  created: async function () {},
   data: function () {
     return {
       folder: null,
