@@ -1,26 +1,26 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, Field
 
 
 class SUserCreate(BaseModel):
     email: EmailStr
     password: str
-    full_name: str
+    full_name: str = Field(max_length=80)
     is_active: bool = True
     is_superuser: bool = False
 
 
 class SUserUpdate(BaseModel):
-    full_name: Optional[str] = None
+    full_name: Optional[str] = Field(max_length=2048)
     password: Optional[str] = None
     coreactivity: Optional[int] = None
     coretasklist: Optional[int] = None
 
 
 class SUserAdminUpdate(SUserUpdate):
-    email: Optional[EmailStr] = None
+    email: Optional[EmailStr]
     is_active: bool = True
     is_superuser: bool = False
 

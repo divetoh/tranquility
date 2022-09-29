@@ -1,6 +1,6 @@
 from datetime import date, datetime
 from typing import Optional
-from pydantic import BaseModel, conlist
+from pydantic import BaseModel, conlist, Field
 
 
 class SMemorizeStackOut(BaseModel):
@@ -17,18 +17,18 @@ class SMemorizeStackOut(BaseModel):
 
 class SMemorizeStackCreate(BaseModel):
     """ Memory Card Stack Request for create """
-    section: str
+    section: str = Field(max_length=100)
     is_active: bool = True
-    name: str
-    description: str = ""
+    name: str = Field(max_length=250)
+    description: str = Field(default="", max_length=1024)
 
 
 class SMemorizeStackUpdate(BaseModel):
     """ Memory Card Stack Request for update """
-    section: Optional[str]
+    section: Optional[str] = Field(max_length=100)
     is_active: Optional[bool]
-    name: Optional[str]
-    description: Optional[str]
+    name: Optional[str] = Field(max_length=250)
+    description: Optional[str] = Field(max_length=1024)
 
 
 class SMemorizeCardsReadyCount(BaseModel):
@@ -51,15 +51,15 @@ class SMemorizeCategoryOut(BaseModel):
 
 class SMemorizeCategoryCreate(BaseModel):
     """ Memory Card Category Request for create """
-    name: str
-    description: str = ""
+    name: str = Field(max_length=100)
+    description: str = Field(default="", max_length=1024)
     color: int = 0
 
 
 class SMemorizeCategoryUpdate(BaseModel):
     """ Memory Card Category Request for update """
-    name: Optional[str]
-    description: Optional[str]
+    name: Optional[str] = Field(max_length=100)
+    description: Optional[str] = Field(max_length=1024)
     color: Optional[int]
 
 
@@ -100,10 +100,10 @@ class SMemorizeCardCreate(BaseModel):
     stack: int
     category: Optional[int]
     is_active: bool = True
-    name: str
-    obverse: str
-    reverse: str
-    hint: Optional[str]
+    name: str = Field(max_length=100)
+    obverse: str = Field(max_length=1024)
+    reverse: str = Field(max_length=4096)
+    hint: Optional[str] = Field(max_length=1024)
 
 
 class SMemorizeCardUpdate(BaseModel):
@@ -111,10 +111,10 @@ class SMemorizeCardUpdate(BaseModel):
     stack: Optional[int]
     category: Optional[int]
     is_active: Optional[bool]
-    name: Optional[str]
-    obverse: Optional[str]
-    reverse: Optional[str]
-    hint: Optional[str]
+    name: Optional[str] = Field(max_length=100)
+    obverse: Optional[str] = Field(max_length=1024)
+    reverse: Optional[str] = Field(max_length=4096)
+    hint: Optional[str] = Field(max_length=1024)
 
 
 class SMemorizeCardOutHistory(BaseModel):

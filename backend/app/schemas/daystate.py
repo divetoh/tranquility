@@ -1,6 +1,6 @@
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SDayStateOut(BaseModel):
@@ -16,7 +16,7 @@ class SDayStateOut(BaseModel):
 
 class SDayStateUpdate(BaseModel):
     """ DayState Request for update """
-    description: Optional[str]
+    description: Optional[str] = Field(max_length=2048)
     rating: Optional[int]
     complited: Optional[str]
 
@@ -24,6 +24,6 @@ class SDayStateUpdate(BaseModel):
 class SDayStateCreate(BaseModel):
     """ Internal DayState create schema """
     statedate: date
-    description: str = ""
+    description: str = Field(default="", max_length=2048)
     rating: int = 0
     complited: str = "[]"

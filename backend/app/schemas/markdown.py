@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SMarkdownOut(BaseModel):
@@ -15,13 +15,13 @@ class SMarkdownOut(BaseModel):
 
 class SMarkdownUpdate(BaseModel):
     """ Markdown Request for update """
-    name: Optional[str]
+    name: Optional[str] = Field(max_length=80)
     md: Optional[str]
     folder: Optional[int]
 
 
 class SMarkdownCreate(BaseModel):
     """ Markdown Request for create """
-    name: str = ""
+    name: str = Field(default="", max_length=80)
     md: str = ""
     folder: int

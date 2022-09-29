@@ -1,6 +1,6 @@
 from typing import Optional
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SFolderOut(BaseModel):
@@ -17,13 +17,13 @@ class SFolderOut(BaseModel):
 class SFolderUpdate(BaseModel):
     """ Folder Request for update """
     parent: Optional[int]
-    name: Optional[str]
+    name: Optional[str]  = Field(max_length=255)
 
 
 class SFolderCreate(BaseModel):
     """ Folder Request for create """
     parent: Optional[int]
-    name: str
+    name: str = Field(max_length=255)
     foldertype: int
 
 

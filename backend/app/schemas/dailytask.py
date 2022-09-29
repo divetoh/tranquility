@@ -1,5 +1,5 @@
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SDailyTaskOut(BaseModel):
@@ -15,10 +15,10 @@ class SDailyTaskOut(BaseModel):
 class SDailyTaskUpdate(BaseModel):
     """ DailyTask Request for update """
     is_active: Optional[bool]
-    name: Optional[str]
+    name: Optional[str] = Field(max_length=400)
 
 
 class SDailyTaskCreate(BaseModel):
     """ DailyTask Request for create """
     is_active: bool = True
-    name: str
+    name: str = Field(max_length=400)

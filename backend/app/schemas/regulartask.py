@@ -1,6 +1,6 @@
 from datetime import date
 from typing import Optional
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class SRegularTaskOut(BaseModel):
@@ -18,7 +18,7 @@ class SRegularTaskOut(BaseModel):
 class SRegularTaskUpdate(BaseModel):
     """ RegularTask Request for update """
     is_active: Optional[bool]
-    name: Optional[str]
+    name: Optional[str] = Field(max_length=400)
     nextdate: Optional[date]
     period: Optional[int]
 
@@ -26,6 +26,6 @@ class SRegularTaskUpdate(BaseModel):
 class SRegularTaskCreate(BaseModel):
     """ RegularTask Request for create """
     is_active: bool = True
-    name: str = ""
+    name: str = Field(default="", max_length=400)
     nextdate: date
     period: int = 1
